@@ -1,0 +1,2536 @@
+{
+  "0x00000004": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "XAPILIB",
+    "name": "_tls_array",
+    "raw": "XAPILIB__VAR___tls_array = 0x00000004"
+  },
+  "0x00000008": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "XAPILIB",
+    "name": "XapiLastErrorCode_OFFSET",
+    "raw": "XAPILIB__VAR__XapiLastErrorCode_OFFSET = 0x00000008"
+  },
+  "0x00000794": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DDevice__m_VertexShader_OFFSET",
+    "raw": "D3D8__VAR__D3DDevice__m_VertexShader_OFFSET = 0x00000794"
+  },
+  "0x00001db4": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice__m_SwapCallback_OFFSET",
+    "raw": "D3D8LTCG__VAR__D3DDevice__m_SwapCallback_OFFSET = 0x00001db4"
+  },
+  "0x00001db8": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice__m_VBlankCallback_OFFSET",
+    "raw": "D3D8LTCG__VAR__D3DDevice__m_VBlankCallback_OFFSET = 0x00001db8"
+  },
+  "0x00001dbc": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice__m_VerticalBlankEvent_OFFSET",
+    "raw": "D3D8LTCG__VAR__D3DDevice__m_VerticalBlankEvent_OFFSET = 0x00001dbc"
+  },
+  "0x001cfc03": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XCalculateSignatureBegin(psh dwFlags, psh dwAltTitleId)",
+    "raw": "XAPILIB__FUN__stdcall__XCalculateSignatureBegin(psh dwFlags, psh dwAltTitleId) = 0x001cfc03"
+  },
+  "0x001cfe40": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XapiSelectCachePartition(psh bAlwaysFormat, psh pnCachePartition, psh pbForceFormat)",
+    "raw": "XAPILIB__FUN__stdcall__XapiSelectCachePartition(psh bAlwaysFormat, psh pnCachePartition, psh pbForceFormat) = 0x001cfe40"
+  },
+  "0x001d008b": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XMountUtilityDrive(psh bFormatClean)",
+    "raw": "XAPILIB__FUN__stdcall__XMountUtilityDrive(psh bFormatClean) = 0x001d008b"
+  },
+  "0x001d0348": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XLaunchNewImageA(psh lpTitlePath, psh pLaunchData)",
+    "raw": "XAPILIB__FUN__stdcall__XLaunchNewImageA(psh lpTitlePath, psh pLaunchData) = 0x001d0348"
+  },
+  "0x001d1830": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "CreateEventA(psh lpEventAttributes, psh bManualReset, psh bInitialState, psh lpName)",
+    "raw": "XAPILIB__FUN__stdcall__CreateEventA(psh lpEventAttributes, psh bManualReset, psh bInitialState, psh lpName) = 0x001d1830"
+  },
+  "0x001d1891": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "SetEvent(psh hEvent)",
+    "raw": "XAPILIB__FUN__stdcall__SetEvent(psh hEvent) = 0x001d1891"
+  },
+  "0x001d19e8": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XapiCallThreadNotifyRoutines(psh Create)",
+    "raw": "XAPILIB__FUN__stdcall__XapiCallThreadNotifyRoutines(psh Create) = 0x001d19e8"
+  },
+  "0x001d1a20": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "SetThreadPriority(psh hThread, psh nPriority)",
+    "raw": "XAPILIB__FUN__stdcall__SetThreadPriority(psh hThread, psh nPriority) = 0x001d1a20"
+  },
+  "0x001d1a72": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "GetThreadPriority(psh hThread)",
+    "raw": "XAPILIB__FUN__stdcall__GetThreadPriority(psh hThread) = 0x001d1a72"
+  },
+  "0x001d1ac6": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "RaiseException(psh dwExceptionCode, psh dwExceptionFlags, psh nNumberOfArguments, psh lpArguments)",
+    "raw": "XAPILIB__FUN__stdcall__RaiseException(psh dwExceptionCode, psh dwExceptionFlags, psh nNumberOfArguments, psh lpArguments) = 0x001d1ac6"
+  },
+  "0x001d1b1c": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "SwitchToThread()",
+    "raw": "XAPILIB__FUN__stdcall__SwitchToThread() = 0x001d1b1c"
+  },
+  "0x001d1b2f": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "ExitThread(psh dwExitCode)",
+    "raw": "XAPILIB__FUN__stdcall__ExitThread(psh dwExitCode) = 0x001d1b2f"
+  },
+  "0x001d1b53": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XRegisterThreadNotifyRoutine(psh pThreadNotification, psh bRegister)",
+    "raw": "XAPILIB__FUN__stdcall__XRegisterThreadNotifyRoutine(psh pThreadNotification, psh bRegister) = 0x001d1b53"
+  },
+  "0x001d1b9c": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "UnhandledExceptionFilter(psh ExceptionPointers)",
+    "raw": "XAPILIB__FUN__stdcall__UnhandledExceptionFilter(psh ExceptionPointers) = 0x001d1b9c"
+  },
+  "0x001d1bd8": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XapiThreadStartup(psh StartRoutine, psh StartContext)",
+    "raw": "XAPILIB__FUN__stdcall__XapiThreadStartup(psh StartRoutine, psh StartContext) = 0x001d1bd8"
+  },
+  "0x001d1c70": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "CreateThread(psh lpThreadAttributes, psh dwStackSize, psh lpStartAddress, psh lpParameter, psh dwCreationFlags, psh lpThreadId)",
+    "raw": "XAPILIB__FUN__stdcall__CreateThread(psh lpThreadAttributes, psh dwStackSize, psh lpStartAddress, psh lpParameter, psh dwCreationFlags, psh lpThreadId) = 0x001d1c70"
+  },
+  "0x001d1ceb": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "GetLastError()",
+    "raw": "XAPILIB__FUN__stdcall__GetLastError() = 0x001d1ceb"
+  },
+  "0x001d1d13": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "SetLastError(psh ErrorCode)",
+    "raw": "XAPILIB__FUN__stdcall__SetLastError(psh ErrorCode) = 0x001d1d13"
+  },
+  "0x001d1d41": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XapiSetLastNTError(psh Status)",
+    "raw": "XAPILIB__FUN__stdcall__XapiSetLastNTError(psh Status) = 0x001d1d41"
+  },
+  "0x001d1d58": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "GetOverlappedResult(psh hFile, psh lpOverlapped, psh lpNumberOfBytesTransferred, psh bWait)",
+    "raw": "XAPILIB__FUN__stdcall__GetOverlappedResult(psh hFile, psh lpOverlapped, psh lpNumberOfBytesTransferred, psh bWait) = 0x001d1d58"
+  },
+  "0x001d246c": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "QueryPerformanceCounter(psh lpPerformanceCount)",
+    "raw": "XAPILIB__FUN__stdcall__QueryPerformanceCounter(psh lpPerformanceCount) = 0x001d246c"
+  },
+  "0x001d2921": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "GetTimeZoneInformation(psh lpTimeZoneInformation)",
+    "raw": "XAPILIB__FUN__stdcall__GetTimeZoneInformation(psh lpTimeZoneInformation) = 0x001d2921"
+  },
+  "0x001d2b53": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "mainXapiStartup(psh lpParameter)",
+    "raw": "XAPILIB__FUN__stdcall__mainXapiStartup(psh lpParameter) = 0x001d2b53"
+  },
+  "0x001d2bc7": {
+    "calling_convention": "cdecl",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "mainCRTStartup()",
+    "raw": "XAPILIB__FUN__cdecl__mainCRTStartup() = 0x001d2bc7"
+  },
+  "0x001d2d15": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "OutputDebugStringA(psh lpOutputString)",
+    "raw": "XAPILIB__FUN__stdcall__OutputDebugStringA(psh lpOutputString) = 0x001d2d15"
+  },
+  "0x001d2ea6": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XapiMapLetterToDirectory(psh pDriveString, psh pDeviceString, psh pszTitleId, psh bCreateDirectory, psh pwszTitleName, psh bUpdateTimestamp)",
+    "raw": "XAPILIB__FUN__stdcall__XapiMapLetterToDirectory(psh pDriveString, psh pDeviceString, psh pszTitleId, psh bCreateDirectory, psh pwszTitleName, psh bUpdateTimestamp) = 0x001d2ea6"
+  },
+  "0x001d322f": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XapiBootToDash(psh dwReason, psh dwParameter1, psh dwParameter2)",
+    "raw": "XAPILIB__FUN__stdcall__XapiBootToDash(psh dwReason, psh dwParameter1, psh dwParameter2) = 0x001d322f"
+  },
+  "0x001d32a5": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XapiInitProcess()",
+    "raw": "XAPILIB__FUN__stdcall__XapiInitProcess() = 0x001d32a5"
+  },
+  "0x001d41b3": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XapiFormatObjectAttributes(psh pObjectAttributes, psh pObjectName, psh pName)",
+    "raw": "XAPILIB__FUN__stdcall__XapiFormatObjectAttributes(psh pObjectAttributes, psh pObjectName, psh pName) = 0x001d41b3"
+  },
+  "0x001d420a": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "_cinit()",
+    "raw": "XAPILIB__FUN__stdcall___cinit() = 0x001d420a"
+  },
+  "0x001d4262": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "_rtinit()",
+    "raw": "XAPILIB__FUN__stdcall___rtinit() = 0x001d4262"
+  },
+  "0x001d451d": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XGetSectionSize(psh hSection)",
+    "raw": "XAPILIB__FUN__stdcall__XGetSectionSize(psh hSection) = 0x001d451d"
+  },
+  "0x001d6b64": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XAutoPowerDownResetTimer()",
+    "raw": "XAPILIB__FUN__stdcall__XAutoPowerDownResetTimer() = 0x001d6b64"
+  },
+  "0x0020fd5e": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XONLINES",
+    "name": "XNetGetEthernetLinkStatus()",
+    "raw": "XONLINES__FUN__stdcall__XNetGetEthernetLinkStatus() = 0x0020fd5e"
+  },
+  "0x002f438c": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "DSound_CRefCount_AddRef(psh pThis)",
+    "raw": "DSOUND__FUN__stdcall__DSound_CRefCount_AddRef(psh pThis) = 0x002f438c"
+  },
+  "0x002f43aa": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "DSound_CRefCount_Release(psh pThis)",
+    "raw": "DSOUND__FUN__stdcall__DSound_CRefCount_Release(psh pThis) = 0x002f43aa"
+  },
+  "0x002f4515": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "DirectSoundEnterCriticalSection()",
+    "raw": "DSOUND__FUN__stdcall__DirectSoundEnterCriticalSection() = 0x002f4515"
+  },
+  "0x002f45a1": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_Release(psh pThis)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_Release(psh pThis) = 0x002f45a1"
+  },
+  "0x002f45b7": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_Release(psh pThis)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_Release(psh pThis) = 0x002f45b7"
+  },
+  "0x002f45cd": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "DirectSoundUseLightHRTF()",
+    "raw": "DSOUND__FUN__stdcall__DirectSoundUseLightHRTF() = 0x002f45cd"
+  },
+  "0x002f45ec": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "XAudioCalculatePitch(psh dwFrequency)",
+    "raw": "DSOUND__FUN__stdcall__XAudioCalculatePitch(psh dwFrequency) = 0x002f45ec"
+  },
+  "0x002f46af": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_GetSpeakerConfig(psh this, psh pdwSpeakerConfig)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_GetSpeakerConfig(psh this, psh pdwSpeakerConfig) = 0x002f46af"
+  },
+  "0x002f46fc": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_DownloadEffectsImage(psh this, psh pvImageBuffer, psh dwImageSize, psh pImageLoc, psh ppImageDesc)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_DownloadEffectsImage(psh this, psh pvImageBuffer, psh dwImageSize, psh pImageLoc, psh ppImageDesc) = 0x002f46fc"
+  },
+  "0x002f4760": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_SetEffectData(psh this, psh dwEffectIndex, psh dwOffset, psh pvData, psh dwDataSize, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_SetEffectData(psh this, psh dwEffectIndex, psh dwOffset, psh pvData, psh dwDataSize, psh dwApply) = 0x002f4760"
+  },
+  "0x002f47c2": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_GetEffectData(psh this, psh dwEffectIndex, psh dwOffset, psh pvData, psh dwDataSize)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_GetEffectData(psh this, psh dwEffectIndex, psh dwOffset, psh pvData, psh dwDataSize) = 0x002f47c2"
+  },
+  "0x002f4821": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_CommitEffectData(psh this)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_CommitEffectData(psh this) = 0x002f4821"
+  },
+  "0x002f4871": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_SetMixBinHeadroom(psh this, psh dwMixBinMask, psh dwHeadroom)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_SetMixBinHeadroom(psh this, psh dwMixBinMask, psh dwHeadroom) = 0x002f4871"
+  },
+  "0x002f48d0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_GetOutputLevels(psh this, psh pOutputLevels, psh bResetPeakValues)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_GetOutputLevels(psh this, psh pOutputLevels, psh bResetPeakValues) = 0x002f48d0"
+  },
+  "0x002f4916": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_SynchPlayback(psh this)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_SynchPlayback(psh this) = 0x002f4916"
+  },
+  "0x002f4963": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_DoWork()",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_DoWork() = 0x002f4963"
+  },
+  "0x002f4994": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_EnableHeadphones(psh this, psh fEnabled)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_EnableHeadphones(psh this, psh fEnabled) = 0x002f4994"
+  },
+  "0x002f4aaf": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundVoiceSettings_SetMixBinVolumes(ecx this, psh pMixBins)",
+    "raw": "DSOUND__FUN__thiscall__CDirectSoundVoiceSettings_SetMixBinVolumes(ecx this, psh pMixBins) = 0x002f4aaf"
+  },
+  "0x002f4b8f": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundVoice_SetPitch(psh pThis, psh lPitch)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundVoice_SetPitch(psh pThis, psh lPitch) = 0x002f4b8f"
+  },
+  "0x002f4ba8": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundVoice_SetVolume(psh pThis, psh lVolume)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundVoice_SetVolume(psh pThis, psh lVolume) = 0x002f4ba8"
+  },
+  "0x002f4bc4": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundVoice_SetHeadroom(psh pThis, psh dwHeadroom)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundVoice_SetHeadroom(psh pThis, psh dwHeadroom) = 0x002f4bc4"
+  },
+  "0x002f4be7": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundVoice_SetMixBinVolumes_8(psh pThis, psh pMixBins)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundVoice_SetMixBinVolumes_8(psh pThis, psh pMixBins) = 0x002f4be7"
+  },
+  "0x002f4c04": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundVoice_CommitDeferredSettings(psh pThis)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundVoice_CommitDeferredSettings(psh pThis) = 0x002f4c04"
+  },
+  "0x002f4dae": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_Play(psh this, psh dwReserved1, psh dwReserved2, psh dwFlags)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_Play(psh this, psh dwReserved1, psh dwReserved2, psh dwFlags) = 0x002f4dae"
+  },
+  "0x002f4dff": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_Stop(psh this)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_Stop(psh this) = 0x002f4dff"
+  },
+  "0x002f4e4e": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_StopEx(psh this, psh2 rtTimeStamp, psh dwFlags)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_StopEx(psh this, psh2 rtTimeStamp, psh dwFlags) = 0x002f4e4e"
+  },
+  "0x002f4ea7": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_GetStatus(psh this, psh pdwStatus)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_GetStatus(psh this, psh pdwStatus) = 0x002f4ea7"
+  },
+  "0x002f4ef8": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_SetLoopRegion(psh this, psh dwLoopStart, psh dwLoopLength)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_SetLoopRegion(psh this, psh dwLoopStart, psh dwLoopLength) = 0x002f4ef8"
+  },
+  "0x002f4f7d": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_GetCurrentPosition(psh this, psh pdwCurrentPlayCursor, psh pdwCurrentWriteCursor)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_GetCurrentPosition(psh this, psh pdwCurrentPlayCursor, psh pdwCurrentWriteCursor) = 0x002f4f7d"
+  },
+  "0x002f4fd2": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_SetCurrentPosition(psh this, psh dwNewPosition)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_SetCurrentPosition(psh this, psh dwNewPosition) = 0x002f4fd2"
+  },
+  "0x002f5061": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_AddRef(psh pThis)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundStream_AddRef(psh pThis) = 0x002f5061"
+  },
+  "0x002f50a8": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_Release(psh pThis)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundStream_Release(psh pThis) = 0x002f50a8"
+  },
+  "0x002f50f6": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_GetInfo(psh pThis, psh pInfo)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundStream_GetInfo(psh pThis, psh pInfo) = 0x002f50f6"
+  },
+  "0x002f515d": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_Discontinuity(psh pThis)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundStream_Discontinuity(psh pThis) = 0x002f515d"
+  },
+  "0x002f51aa": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_Flush(psh pThis)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundStream_Flush(psh pThis) = 0x002f51aa"
+  },
+  "0x002f51f5": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_GetStatus__r2(psh pThis, psh pdwStatus)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundStream_GetStatus__r2(psh pThis, psh pdwStatus) = 0x002f51f5"
+  },
+  "0x002f5246": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_Process(psh pThis, psh pInputBuffer, psh pOutputBuffer)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundStream_Process(psh pThis, psh pInputBuffer, psh pOutputBuffer) = 0x002f5246"
+  },
+  "0x002f52bd": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_Pause(psh pThis, psh dwPause)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundStream_Pause(psh pThis, psh dwPause) = 0x002f52bd"
+  },
+  "0x002f530e": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_FlushEx(psh pThis, psh2 rtTimeStamp, psh dwFlags)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundStream_FlushEx(psh pThis, psh2 rtTimeStamp, psh dwFlags) = 0x002f530e"
+  },
+  "0x002f5378": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound3DCalculator_GetVoiceData(psh pUnknown1, psh pUnknown2, psh pUnknown3, psh pUnknown4, psh pUnknown5)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound3DCalculator_GetVoiceData(psh pUnknown1, psh pUnknown2, psh pUnknown3, psh pUnknown4, psh pUnknown5) = 0x002f5378"
+  },
+  "0x002f56c0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_SetVolume(psh this, psh lVolume)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_SetVolume(psh this, psh lVolume) = 0x002f56c0"
+  },
+  "0x002f570e": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_SetHeadroom(psh this, psh dwHeadroom)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_SetHeadroom(psh this, psh dwHeadroom) = 0x002f570e"
+  },
+  "0x002f575c": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_SetMixBinVolumes_8(psh this, psh pMixBins)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_SetMixBinVolumes_8(psh this, psh pMixBins) = 0x002f575c"
+  },
+  "0x002f57aa": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_SetVolume(psh pThis, psh lVolume)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundStream_SetVolume(psh pThis, psh lVolume) = 0x002f57aa"
+  },
+  "0x002f57fc": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_SetHeadroom(psh pThis, psh dwHeadroom)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundStream_SetHeadroom(psh pThis, psh dwHeadroom) = 0x002f57fc"
+  },
+  "0x002f584e": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_SetMixBinVolumes_8(psh pThis, psh pMixBins)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundStream_SetMixBinVolumes_8(psh pThis, psh pMixBins) = 0x002f584e"
+  },
+  "0x002f58a0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_GetSpeakerConfig(psh pThis, psh pdwSpeakerConfig)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_GetSpeakerConfig(psh pThis, psh pdwSpeakerConfig) = 0x002f58a0"
+  },
+  "0x002f58bc": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_DownloadEffectsImage(psh pThis, psh pvImageBuffer, psh dwImageSize, psh pImageLoc, psh ppImageDesc)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_DownloadEffectsImage(psh pThis, psh pvImageBuffer, psh dwImageSize, psh pImageLoc, psh ppImageDesc) = 0x002f58bc"
+  },
+  "0x002f58e3": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_GetEffectData(psh pThis, psh dwEffectIndex, psh dwOffset, psh pvData, psh dwDataSize)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_GetEffectData(psh pThis, psh dwEffectIndex, psh dwOffset, psh pvData, psh dwDataSize) = 0x002f58e3"
+  },
+  "0x002f590a": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_SetEffectData(psh pThis, psh dwEffectIndex, psh dwOffset, psh pvData, psh dwDataSize, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_SetEffectData(psh pThis, psh dwEffectIndex, psh dwOffset, psh pvData, psh dwDataSize, psh dwApply) = 0x002f590a"
+  },
+  "0x002f5934": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_CommitEffectData(psh pThis)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_CommitEffectData(psh pThis) = 0x002f5934"
+  },
+  "0x002f594c": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_EnableHeadphones(psh pThis, psh fEnabled)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_EnableHeadphones(psh pThis, psh fEnabled) = 0x002f594c"
+  },
+  "0x002f5968": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_SetMixBinHeadroom(psh pThis, psh dwMixBinMask, psh dwHeadroom)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_SetMixBinHeadroom(psh pThis, psh dwMixBinMask, psh dwHeadroom) = 0x002f5968"
+  },
+  "0x002f5988": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_GetOutputLevels(psh pThis, psh pOutputLevels, psh bResetPeakValues)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_GetOutputLevels(psh pThis, psh pOutputLevels, psh bResetPeakValues) = 0x002f5988"
+  },
+  "0x002f59a8": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_SynchPlayback(psh pThis)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_SynchPlayback(psh pThis) = 0x002f59a8"
+  },
+  "0x002f59c0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_SetVolume(psh pThis, psh lVolume)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_SetVolume(psh pThis, psh lVolume) = 0x002f59c0"
+  },
+  "0x002f59dc": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_SetHeadroom(psh pThis, psh dwHeadroom)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_SetHeadroom(psh pThis, psh dwHeadroom) = 0x002f59dc"
+  },
+  "0x002f59f8": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_SetMixBinVolumes_8(psh pThis, psh pMixBins)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_SetMixBinVolumes_8(psh pThis, psh pMixBins) = 0x002f59f8"
+  },
+  "0x002f5a14": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_Play(psh pThis, psh dwReserved1, psh dwReserved2, psh dwFlags)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_Play(psh pThis, psh dwReserved1, psh dwReserved2, psh dwFlags) = 0x002f5a14"
+  },
+  "0x002f5a38": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_Stop(psh pThis)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_Stop(psh pThis) = 0x002f5a38"
+  },
+  "0x002f5a50": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_StopEx(psh pThis, psh2 rtTimeStamp, psh dwFlags)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_StopEx(psh pThis, psh2 rtTimeStamp, psh dwFlags) = 0x002f5a50"
+  },
+  "0x002f5a74": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_SetLoopRegion(psh pThis, psh dwLoopStart, psh dwLoopLength)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_SetLoopRegion(psh pThis, psh dwLoopStart, psh dwLoopLength) = 0x002f5a74"
+  },
+  "0x002f5a94": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_GetStatus(psh pThis, psh pdwStatus)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_GetStatus(psh pThis, psh pdwStatus) = 0x002f5a94"
+  },
+  "0x002f5ab0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_GetCurrentPosition(psh pThis, psh pdwCurrentPlayCursor, psh pdwCurrentWriteCursor)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_GetCurrentPosition(psh pThis, psh pdwCurrentPlayCursor, psh pdwCurrentWriteCursor) = 0x002f5ab0"
+  },
+  "0x002f5ad0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_SetCurrentPosition(psh pThis, psh dwNewPosition)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_SetCurrentPosition(psh pThis, psh dwNewPosition) = 0x002f5ad0"
+  },
+  "0x002f5aec": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundStream_SetVolume(psh pThis, psh lVolume)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundStream_SetVolume(psh pThis, psh lVolume) = 0x002f5aec"
+  },
+  "0x002f5af1": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundStream_SetHeadroom(psh pThis, psh dwHeadroom)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundStream_SetHeadroom(psh pThis, psh dwHeadroom) = 0x002f5af1"
+  },
+  "0x002f5af6": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundStream_SetMixBinVolumes_8(psh pThis, psh pMixBins)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundStream_SetMixBinVolumes_8(psh pThis, psh pMixBins) = 0x002f5af6"
+  },
+  "0x002f5afb": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundStream_Pause(psh pThis, psh dwPause)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundStream_Pause(psh pThis, psh dwPause) = 0x002f5afb"
+  },
+  "0x002f5b00": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundStream_FlushEx(psh pThis, psh2 rtTimeStamp, psh dwFlags)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundStream_FlushEx(psh pThis, psh2 rtTimeStamp, psh dwFlags) = 0x002f5b00"
+  },
+  "0x002f5b18": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "DirectSoundDoWork()",
+    "raw": "DSOUND__FUN__stdcall__DirectSoundDoWork() = 0x002f5b18"
+  },
+  "0x002f5dd6": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundVoice_SetFrequency(psh pThis, psh dwFrequency)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundVoice_SetFrequency(psh pThis, psh dwFrequency) = 0x002f5dd6"
+  },
+  "0x002f5dfa": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundVoice_SetOutputBuffer(psh pThis, psh pOutputBuffer)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundVoice_SetOutputBuffer(psh pThis, psh pOutputBuffer) = 0x002f5dfa"
+  },
+  "0x002f5e4e": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundVoice_SetMixBins(psh pThis, psh pMixBins)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundVoice_SetMixBins(psh pThis, psh pMixBins) = 0x002f5e4e"
+  },
+  "0x002f5e6b": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundVoice_SetAllParameters(psh pThis, psh pc3DBufferParameters, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundVoice_SetAllParameters(psh pThis, psh pc3DBufferParameters, psh dwApply) = 0x002f5e6b"
+  },
+  "0x002f5fa3": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundVoice_SetRolloffCurve(psh pThis, psh pflPoints, psh dwPointCount, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundVoice_SetRolloffCurve(psh pThis, psh pflPoints, psh dwPointCount, psh dwApply) = 0x002f5fa3"
+  },
+  "0x002f5fe6": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundVoice_SetI3DL2Source(psh pThis, psh pds3db, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundVoice_SetI3DL2Source(psh pThis, psh pds3db, psh dwApply) = 0x002f5fe6"
+  },
+  "0x002f6107": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_SetPlayRegion(psh this, psh dwPlayStart, psh dwPlayLength)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_SetPlayRegion(psh this, psh dwPlayStart, psh dwPlayLength) = 0x002f6107"
+  },
+  "0x002f61a2": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_SetFrequency(psh this, psh dwFrequency)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_SetFrequency(psh this, psh dwFrequency) = 0x002f61a2"
+  },
+  "0x002f61f0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_SetOutputBuffer(psh this, psh pOutputBuffer)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_SetOutputBuffer(psh this, psh pOutputBuffer) = 0x002f61f0"
+  },
+  "0x002f623e": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_SetMixBins(psh this, psh mixBins)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_SetMixBins(psh this, psh mixBins) = 0x002f623e"
+  },
+  "0x002f628c": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_SetAllParameters(psh this, psh pc3DBufferParameters, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_SetAllParameters(psh this, psh pc3DBufferParameters, psh dwApply) = 0x002f628c"
+  },
+  "0x002f62de": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_SetRolloffCurve(psh this, psh pflPoints, psh dwPointCount, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_SetRolloffCurve(psh this, psh pflPoints, psh dwPointCount, psh dwApply) = 0x002f62de"
+  },
+  "0x002f6334": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_SetI3DL2Source(psh this, psh pds3db, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_SetI3DL2Source(psh this, psh pds3db, psh dwApply) = 0x002f6334"
+  },
+  "0x002f6386": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_SetMixBins(psh pThis, psh pMixBins)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundStream_SetMixBins(psh pThis, psh pMixBins) = 0x002f6386"
+  },
+  "0x002f63d8": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_SetFrequency(psh pThis, psh dwFrequency)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_SetFrequency(psh pThis, psh dwFrequency) = 0x002f63d8"
+  },
+  "0x002f63f4": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_SetOutputBuffer(psh pThis, psh pOutputBuffer)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_SetOutputBuffer(psh pThis, psh pOutputBuffer) = 0x002f63f4"
+  },
+  "0x002f6410": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_SetMixBins(psh pThis, psh mixBins)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_SetMixBins(psh pThis, psh mixBins) = 0x002f6410"
+  },
+  "0x002f642c": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_SetAllParameters(psh pThis, psh pc3DBufferParameters, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_SetAllParameters(psh pThis, psh pc3DBufferParameters, psh dwApply) = 0x002f642c"
+  },
+  "0x002f644c": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_SetRolloffCurve(psh pThis, psh pflPoints, psh dwPointCount, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_SetRolloffCurve(psh pThis, psh pflPoints, psh dwPointCount, psh dwApply) = 0x002f644c"
+  },
+  "0x002f6470": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_SetI3DL2Source(psh pThis, psh pds3db, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_SetI3DL2Source(psh pThis, psh pds3db, psh dwApply) = 0x002f6470"
+  },
+  "0x002f6490": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_SetPlayRegion(psh pThis, psh dwPlayStart, psh dwPlayLength)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_SetPlayRegion(psh pThis, psh dwPlayStart, psh dwPlayLength) = 0x002f6490"
+  },
+  "0x002f64b0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundStream_SetMixBins(psh pThis, psh pMixBins)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundStream_SetMixBins(psh pThis, psh pMixBins) = 0x002f64b0"
+  },
+  "0x002f6651": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundVoice_SetFormat(psh pThis, psh pwfxFormat)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundVoice_SetFormat(psh pThis, psh pwfxFormat) = 0x002f6651"
+  },
+  "0x002f6695": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBufferSettings_SetBufferData(ecx this, psh pvBufferData, psh dwBufferBytes)",
+    "raw": "DSOUND__FUN__thiscall__CDirectSoundBufferSettings_SetBufferData(ecx this, psh pvBufferData, psh dwBufferBytes) = 0x002f6695"
+  },
+  "0x002f6721": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_SetBufferData(psh this, psh pvBufferData, psh dwBufferBytes)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_SetBufferData(psh this, psh pvBufferData, psh dwBufferBytes) = 0x002f6721"
+  },
+  "0x002f67cf": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_Constructor(ecx this, psh pdssd)",
+    "raw": "DSOUND__FUN__thiscall__CDirectSoundStream_Constructor(ecx this, psh pdssd) = 0x002f67cf"
+  },
+  "0x002f67f4": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound3DCalculator_Calculate3D(psh pUnknown1, psh pUnknown2)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound3DCalculator_Calculate3D(psh pUnknown1, psh pUnknown2) = 0x002f67f4"
+  },
+  "0x002f6a34": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundBuffer_SetFormat(psh this, psh pwfxFormat)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundBuffer_SetFormat(psh this, psh pwfxFormat) = 0x002f6a34"
+  },
+  "0x002f6a82": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSoundStream_SetFormat(psh pThis, psh pwfxFormat)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSoundStream_SetFormat(psh pThis, psh pwfxFormat) = 0x002f6a82"
+  },
+  "0x002f6ad4": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_SetFormat(psh pThis, psh pwfxFormat)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_SetFormat(psh pThis, psh pwfxFormat) = 0x002f6ad4"
+  },
+  "0x002f6af0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundBuffer_SetBufferData(psh pThis, psh pvBufferData, psh dwBufferBytes)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundBuffer_SetBufferData(psh pThis, psh pvBufferData, psh dwBufferBytes) = 0x002f6af0"
+  },
+  "0x002f6b10": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSoundStream_SetFormat(psh pThis, psh pwfxFormat)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSoundStream_SetFormat(psh pThis, psh pwfxFormat) = 0x002f6b10"
+  },
+  "0x002f6ba4": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_CommitDeferredSettings(psh this)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_CommitDeferredSettings(psh this) = 0x002f6ba4"
+  },
+  "0x002f6fd0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_CommitDeferredSettings(psh pThis)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_CommitDeferredSettings(psh pThis) = 0x002f6fd0"
+  },
+  "0x002f6fe8": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_CreateSoundBuffer(psh this, psh pdsbd, psh ppBuffer, psh pUnused4)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_CreateSoundBuffer(psh this, psh pdsbd, psh ppBuffer, psh pUnused4) = 0x002f6fe8"
+  },
+  "0x002f7084": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_CreateSoundStream(psh this, psh pdssd, psh ppStream, psh pUnused4)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_CreateSoundStream(psh this, psh pdssd, psh ppStream, psh pUnused4) = 0x002f7084"
+  },
+  "0x002f7115": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_SetDistanceFactor(psh this, psh fDistanceFactor, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_SetDistanceFactor(psh this, psh fDistanceFactor, psh dwApply) = 0x002f7115"
+  },
+  "0x002f7174": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_SetDopplerFactor(psh this, psh fDopplerFactor, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_SetDopplerFactor(psh this, psh fDopplerFactor, psh dwApply) = 0x002f7174"
+  },
+  "0x002f71d3": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_SetRolloffFactor(psh this, psh fRolloffFactor, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_SetRolloffFactor(psh this, psh fRolloffFactor, psh dwApply) = 0x002f71d3"
+  },
+  "0x002f7232": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_SetOrientation(psh this, psh xFront, psh yFront, psh zFront, psh xTop, psh yTop, psh zTop, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_SetOrientation(psh this, psh xFront, psh yFront, psh zFront, psh xTop, psh yTop, psh zTop, psh dwApply) = 0x002f7232"
+  },
+  "0x002f72bf": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_SetPosition(psh this, psh x, psh y, psh z, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_SetPosition(psh this, psh x, psh y, psh z, psh dwApply) = 0x002f72bf"
+  },
+  "0x002f7332": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_SetVelocity(psh this, psh x, psh y, psh z, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_SetVelocity(psh this, psh x, psh y, psh z, psh dwApply) = 0x002f7332"
+  },
+  "0x002f73a5": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CDirectSound_SetI3DL2Listener(psh this, psh pds3dl, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__CDirectSound_SetI3DL2Listener(psh this, psh pds3dl, psh dwApply) = 0x002f73a5"
+  },
+  "0x002f74c8": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_CreateSoundBuffer(psh pThis, psh pdsbd, psh ppBuffer, psh pUnused4)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_CreateSoundBuffer(psh pThis, psh pdsbd, psh ppBuffer, psh pUnused4) = 0x002f74c8"
+  },
+  "0x002f74ec": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_SetDistanceFactor(psh pThis, psh fDistanceFactor, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_SetDistanceFactor(psh pThis, psh fDistanceFactor, psh dwApply) = 0x002f74ec"
+  },
+  "0x002f7510": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_SetDopplerFactor(psh pThis, psh fDopplerFactor, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_SetDopplerFactor(psh pThis, psh fDopplerFactor, psh dwApply) = 0x002f7510"
+  },
+  "0x002f7534": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_SetOrientation(psh pThis, psh xFront, psh yFront, psh zFront, psh xTop, psh yTop, psh zTop, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_SetOrientation(psh pThis, psh xFront, psh yFront, psh zFront, psh xTop, psh yTop, psh zTop, psh dwApply) = 0x002f7534"
+  },
+  "0x002f757e": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_SetPosition(psh pThis, psh x, psh y, psh z, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_SetPosition(psh pThis, psh x, psh y, psh z, psh dwApply) = 0x002f757e"
+  },
+  "0x002f75b3": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_SetRolloffFactor(psh pThis, psh fRolloffFactor, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_SetRolloffFactor(psh pThis, psh fRolloffFactor, psh dwApply) = 0x002f75b3"
+  },
+  "0x002f75d7": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_SetVelocity(psh pThis, psh x, psh y, psh z, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_SetVelocity(psh pThis, psh x, psh y, psh z, psh dwApply) = 0x002f75d7"
+  },
+  "0x002f760c": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "IDirectSound_SetI3DL2Listener(psh pThis, psh pds3dl, psh dwApply)",
+    "raw": "DSOUND__FUN__stdcall__IDirectSound_SetI3DL2Listener(psh pThis, psh pds3dl, psh dwApply) = 0x002f760c"
+  },
+  "0x002f77d2": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "DirectSoundCreate(psh pguidDeviceId, psh ppDirectSound, psh pUnused3)",
+    "raw": "DSOUND__FUN__stdcall__DirectSoundCreate(psh pguidDeviceId, psh ppDirectSound, psh pUnused3) = 0x002f77d2"
+  },
+  "0x002f7819": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "DirectSoundCreateStream(psh pdssd, psh ppStream)",
+    "raw": "DSOUND__FUN__stdcall__DirectSoundCreateStream(psh pdssd, psh ppStream) = 0x002f7819"
+  },
+  "0x002f7870": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "DSound_CMemoryManager_PoolAlloc(psh PoolTag, psh Size, psh ZeroInitialize)",
+    "raw": "DSOUND__FUN__stdcall__DSound_CMemoryManager_PoolAlloc(psh PoolTag, psh Size, psh ZeroInitialize) = 0x002f7870"
+  },
+  "0x002f807c": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CLightHRTFSource_GetCenterVolume(psh unknown1, psh unknown2, psh unknown3, psh unknown4)",
+    "raw": "DSOUND__FUN__stdcall__CLightHRTFSource_GetCenterVolume(psh unknown1, psh unknown2, psh unknown3, psh unknown4) = 0x002f807c"
+  },
+  "0x002f815f": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CHRTFSource_SetLightHRTF5Channel()",
+    "raw": "DSOUND__FUN__stdcall__CHRTFSource_SetLightHRTF5Channel() = 0x002f815f"
+  },
+  "0x002f8b3d": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxAPU_ServiceDeferredCommandsLow(ecx this)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxAPU_ServiceDeferredCommandsLow(ecx this) = 0x002f8b3d"
+  },
+  "0x002f8c06": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxAPU_SetMixBinHeadroom_4(ecx this, psh dwMixBinMask)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxAPU_SetMixBinHeadroom_4(ecx this, psh dwMixBinMask) = 0x002f8c06"
+  },
+  "0x002f8cdc": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxAPU_SynchPlayback(ecx this)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxAPU_SynchPlayback(ecx this) = 0x002f8cdc"
+  },
+  "0x002f94b4": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxStream_Stop(ecx this, psh dwFlags)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxStream_Stop(ecx this, psh dwFlags) = 0x002f94b4"
+  },
+  "0x002f9526": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxStream_GetStatus(ecx this, psh pdwStatus)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxStream_GetStatus(ecx this, psh pdwStatus) = 0x002f9526"
+  },
+  "0x002f997a": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxStream_Stop_Ex(ecx this, psh2 rtTimeStamp, psh dwFlags)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxStream_Stop_Ex(ecx this, psh2 rtTimeStamp, psh dwFlags) = 0x002f997a"
+  },
+  "0x002f9ab8": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxStream_Discontinuity(ecx this)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxStream_Discontinuity(ecx this) = 0x002f9ab8"
+  },
+  "0x002f9ba8": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxStream_Flush(ecx this)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxStream_Flush(ecx this) = 0x002f9ba8"
+  },
+  "0x002fa01e": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxStream_Pause(ecx this, psh dwPause)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxStream_Pause(ecx this, psh dwPause) = 0x002fa01e"
+  },
+  "0x002fb3fd": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxVoiceClient_SetFilter(ecx this, psh pFilterDesc)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxVoiceClient_SetFilter(ecx this, psh pFilterDesc) = 0x002fb3fd"
+  },
+  "0x002fb781": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxVoiceClient_SetMixBins(ecx this)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxVoiceClient_SetMixBins(ecx this) = 0x002fb781"
+  },
+  "0x002fb842": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxVoiceClient_SetVolume(ecx this)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxVoiceClient_SetVolume(ecx this) = 0x002fb842"
+  },
+  "0x002fb8da": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxVoiceClient_SetPitch(ecx this)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxVoiceClient_SetPitch(ecx this) = 0x002fb8da"
+  },
+  "0x002fbb90": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxVoiceClient_Commit3dSettings_0(ecx this)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxVoiceClient_Commit3dSettings_0(ecx this) = 0x002fbb90"
+  },
+  "0x002fc3bd": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxBuffer_Pause(ecx this, psh dwPause)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxBuffer_Pause(ecx this, psh dwPause) = 0x002fc3bd"
+  },
+  "0x002fc430": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxBuffer_GetStatus(ecx this, psh pdwStatus)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxBuffer_GetStatus(ecx this, psh pdwStatus) = 0x002fc430"
+  },
+  "0x002fc472": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxBuffer_GetCurrentPosition(ecx this, psh pdwCurrentPlayCursor, psh pdwCurrentWriteCursor)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxBuffer_GetCurrentPosition(ecx this, psh pdwCurrentPlayCursor, psh pdwCurrentWriteCursor) = 0x002fc472"
+  },
+  "0x002fc87c": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxBuffer_Play(ecx this, psh dwFlags)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxBuffer_Play(ecx this, psh dwFlags) = 0x002fc87c"
+  },
+  "0x002fc995": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxBuffer_Stop(ecx this, psh dwFlags)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxBuffer_Stop(ecx this, psh dwFlags) = 0x002fc995"
+  },
+  "0x002fca25": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxBuffer_SetCurrentPosition(ecx this, psh dwNewPosition)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxBuffer_SetCurrentPosition(ecx this, psh dwNewPosition) = 0x002fca25"
+  },
+  "0x002fcb3f": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxBuffer_SetBufferData(ecx this)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxBuffer_SetBufferData(ecx this) = 0x002fcb3f"
+  },
+  "0x002fcbfe": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "DSOUND",
+    "name": "CMcpxBuffer_Stop_Ex(ecx this, psh2 rtTimeStamp, psh dwFlags)",
+    "raw": "DSOUND__FUN__thiscall__CMcpxBuffer_Stop_Ex(ecx this, psh2 rtTimeStamp, psh dwFlags) = 0x002fcbfe"
+  },
+  "0x0031ae41": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XONLINES",
+    "name": "XOnlineLogon(psh pUsers, psh pdwServiceIDs, psh dwServices, psh hEvent, psh pHandle)",
+    "raw": "XONLINES__FUN__stdcall__XOnlineLogon(psh pUsers, psh pdwServiceIDs, psh dwServices, psh hEvent, psh pHandle) = 0x0031ae41"
+  },
+  "0x0031b48f": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XONLINES",
+    "name": "XoUpdateLaunchNewImageInternal_16(psh lpTitlePath, psh pLaunchData, psh unkFlags, psh pUnknown4)",
+    "raw": "XONLINES__FUN__stdcall__XoUpdateLaunchNewImageInternal_16(psh lpTitlePath, psh pLaunchData, psh unkFlags, psh pUnknown4) = 0x0031b48f"
+  },
+  "0x0031ff83": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "XONLINES",
+    "name": "CXo_XOnlineLogon(ecx this, psh pUsers, psh pdwServiceIDs, psh dwServices, psh hEvent, psh pHandle)",
+    "raw": "XONLINES__FUN__thiscall__CXo_XOnlineLogon(ecx this, psh pUsers, psh pdwServiceIDs, psh dwServices, psh hEvent, psh pHandle) = 0x0031ff83"
+  },
+  "0x003398bc": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XONLINES",
+    "name": "XnInit_24(psh pUnknown1, psh unknown2, psh pxnsp, psh bWSA, psh wVersionRequested, psh lpWSAData)",
+    "raw": "XONLINES__FUN__stdcall__XnInit_24(psh pUnknown1, psh unknown2, psh pxnsp, psh bWSA, psh wVersionRequested, psh lpWSAData) = 0x003398bc"
+  },
+  "0x00339ac2": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XONLINES",
+    "name": "XNetStartup(psh pxnsp)",
+    "raw": "XONLINES__FUN__stdcall__XNetStartup(psh pxnsp) = 0x00339ac2"
+  },
+  "0x00339ad9": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XONLINES",
+    "name": "WSAStartup(psh wVersionRequested, psh lpWSAData)",
+    "raw": "XONLINES__FUN__stdcall__WSAStartup(psh wVersionRequested, psh lpWSAData) = 0x00339ad9"
+  },
+  "0x00339e63": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "XONLINES",
+    "name": "ioctlsocket(ecx this, psh s, psh cmd, psh argp)",
+    "raw": "XONLINES__FUN__thiscall__ioctlsocket(ecx this, psh s, psh cmd, psh argp) = 0x00339e63"
+  },
+  "0x0033aa2b": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "XONLINES",
+    "name": "bind(ecx this, psh s, psh name, psh namelen)",
+    "raw": "XONLINES__FUN__thiscall__bind(ecx this, psh s, psh name, psh namelen) = 0x0033aa2b"
+  },
+  "0x0033aaaf": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "XONLINES",
+    "name": "connect(ecx this, psh s, psh name, psh namelen)",
+    "raw": "XONLINES__FUN__thiscall__connect(ecx this, psh s, psh name, psh namelen) = 0x0033aaaf"
+  },
+  "0x0033b57a": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "XONLINES",
+    "name": "recv(ecx this, psh s, psh buf, psh len, psh flags)",
+    "raw": "XONLINES__FUN__thiscall__recv(ecx this, psh s, psh buf, psh len, psh flags) = 0x0033b57a"
+  },
+  "0x0033b766": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "XONLINES",
+    "name": "send(ecx this, psh s, psh buf, psh len, psh flags)",
+    "raw": "XONLINES__FUN__thiscall__send(ecx this, psh s, psh buf, psh len, psh flags) = 0x0033b766"
+  },
+  "0x0033bd20": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "XONLINES",
+    "name": "socket(ecx this, psh af, psh type, psh protocol)",
+    "raw": "XONLINES__FUN__thiscall__socket(ecx this, psh af, psh type, psh protocol) = 0x0033bd20"
+  },
+  "0x0034c680": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_Clear(psh Count, psh pRects, psh Flags, psh Color, psh Z, psh Stencil)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_Clear(psh Count, psh pRects, psh Flags, psh Color, psh Z, psh Stencil) = 0x0034c680"
+  },
+  "0x0034caf0": {
+    "calling_convention": "unknown",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3D_DestroyResource_0__LTCG_edi1(edi pResource)",
+    "raw": "D3D8LTCG__FUN__unknown__D3D_DestroyResource_0__LTCG_edi1(edi pResource) = 0x0034caf0"
+  },
+  "0x0034cc00": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DResource_AddRef(psh pThis)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DResource_AddRef(psh pThis) = 0x0034cc00"
+  },
+  "0x0034cc40": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DResource_Release(psh pThis)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DResource_Release(psh pThis) = 0x0034cc40"
+  },
+  "0x0034cc90": {
+    "calling_convention": "fastcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DResource_GetType_0__LTCG_ecx1(ecx pThis)",
+    "raw": "D3D8LTCG__FUN__fastcall__D3DResource_GetType_0__LTCG_ecx1(ecx pThis) = 0x0034cc90"
+  },
+  "0x0034ce90": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_GetDisplayMode(psh pModes)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_GetDisplayMode(psh pModes) = 0x0034ce90"
+  },
+  "0x0034cf90": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderTarget(psh pRenderTarget, psh pNewZStencil)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderTarget(psh pRenderTarget, psh pNewZStencil) = 0x0034cf90"
+  },
+  "0x0034d400": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_CopyRects(psh pSourceSurface, psh pSourceRectsArray, psh cRects, psh pDestinationSurface, psh pDestPointsArray)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_CopyRects(psh pSourceSurface, psh pSourceRectsArray, psh cRects, psh pDestinationSurface, psh pDestPointsArray) = 0x0034d400"
+  },
+  "0x0034d730": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_GetRenderTarget2()",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_GetRenderTarget2() = 0x0034d730"
+  },
+  "0x0034d770": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_GetDepthStencilSurface2()",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_GetDepthStencilSurface2() = 0x0034d770"
+  },
+  "0x0034d7b0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetTransform(psh State, psh pMatrix)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetTransform(psh State, psh pMatrix) = 0x0034d7b0"
+  },
+  "0x0034d8d0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetViewport(psh pViewport)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetViewport(psh pViewport) = 0x0034d8d0"
+  },
+  "0x0034daf0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetMaterial(psh pMaterial)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetMaterial(psh pMaterial) = 0x0034daf0"
+  },
+  "0x0034db20": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetLight(psh Index, psh pLight)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetLight(psh Index, psh pLight) = 0x0034db20"
+  },
+  "0x0034dee0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_LightEnable(psh Index, psh bEnable)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_LightEnable(psh Index, psh bEnable) = 0x0034dee0"
+  },
+  "0x0034e040": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetTexture(psh Stage, psh pTexture)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetTexture(psh Stage, psh pTexture) = 0x0034e040"
+  },
+  "0x0034e200": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetPalette(psh Stage, psh pPalette)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetPalette(psh Stage, psh pPalette) = 0x0034e200"
+  },
+  "0x0034e2a0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_Release()",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_Release() = 0x0034e2a0"
+  },
+  "0x0034e2e0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_BeginVisibilityTest()",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_BeginVisibilityTest() = 0x0034e2e0"
+  },
+  "0x0034e380": {
+    "calling_convention": "unknown",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_EndVisibilityTest_0__LTCG_eax1(eax Index)",
+    "raw": "D3D8LTCG__FUN__unknown__D3DDevice_EndVisibilityTest_0__LTCG_eax1(eax Index) = 0x0034e380"
+  },
+  "0x0034e440": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_GetDisplayFieldStatus(psh pFieldStatus)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_GetDisplayFieldStatus(psh pFieldStatus) = 0x0034e440"
+  },
+  "0x0034e480": {
+    "calling_convention": "unknown",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3D_SetTileNoWait_0__LTCG_eax1_ecx2(eax Index, ecx pTile)",
+    "raw": "D3D8LTCG__FUN__unknown__D3D_SetTileNoWait_0__LTCG_eax1_ecx2(eax Index, ecx pTile) = 0x0034e480"
+  },
+  "0x0034e550": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetScissors(psh Count, psh Exclusive, psh pRects)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetScissors(psh Count, psh Exclusive, psh pRects) = 0x0034e550"
+  },
+  "0x0034e840": {
+    "calling_convention": "unknown",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetFlickerFilter_0__LTCG_esi1(esi Filter)",
+    "raw": "D3D8LTCG__FUN__unknown__D3DDevice_SetFlickerFilter_0__LTCG_esi1(esi Filter) = 0x0034e840"
+  },
+  "0x0034e880": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetScreenSpaceOffset(psh x, psh y)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetScreenSpaceOffset(psh x, psh y) = 0x0034e880"
+  },
+  "0x0034eb10": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_DeletePixelShader(psh Handle)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_DeletePixelShader(psh Handle) = 0x0034eb10"
+  },
+  "0x0034eb30": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetPixelShader(psh Handle)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetPixelShader(psh Handle) = 0x0034eb30"
+  },
+  "0x0034ed40": {
+    "calling_convention": "unknown",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetPixelShaderConstant_4__LTCG_ecx1_eax3(ecx Register, psh pConstantData, eax ConstantCount)",
+    "raw": "D3D8LTCG__FUN__unknown__D3DDevice_SetPixelShaderConstant_4__LTCG_ecx1_eax3(ecx Register, psh pConstantData, eax ConstantCount) = 0x0034ed40"
+  },
+  "0x0034f150": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetStreamSource(psh StreamNumber, psh pStreamData, psh Stride)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetStreamSource(psh StreamNumber, psh pStreamData, psh Stride) = 0x0034f150"
+  },
+  "0x0034f2f0": {
+    "calling_convention": "unknown",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_LoadVertexShader_4__LTCG_eax1(eax Handle, psh Address)",
+    "raw": "D3D8LTCG__FUN__unknown__D3DDevice_LoadVertexShader_4__LTCG_eax1(eax Handle, psh Address) = 0x0034f2f0"
+  },
+  "0x0034f380": {
+    "calling_convention": "unknown",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SelectVertexShader_0__LTCG_eax1_ebx2(eax Handle, ebx Address)",
+    "raw": "D3D8LTCG__FUN__unknown__D3DDevice_SelectVertexShader_0__LTCG_eax1_ebx2(eax Handle, ebx Address) = 0x0034f380"
+  },
+  "0x0034f7e0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_CreateVertexShader(psh pDeclaration, psh pFunction, psh pHandle, psh Usage)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_CreateVertexShader(psh pDeclaration, psh pFunction, psh pHandle, psh Usage) = 0x0034f7e0"
+  },
+  "0x0034f930": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_DeleteVertexShader(psh Handle)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_DeleteVertexShader(psh Handle) = 0x0034f930"
+  },
+  "0x0034fa70": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetVertexShader(psh Handle)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetVertexShader(psh Handle) = 0x0034fa70"
+  },
+  "0x0034fbe0": {
+    "calling_convention": "fastcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetVertexShaderConstant1(ecx Register, edx pConstantData)",
+    "raw": "D3D8LTCG__FUN__fastcall__D3DDevice_SetVertexShaderConstant1(ecx Register, edx pConstantData) = 0x0034fbe0"
+  },
+  "0x0034fc40": {
+    "calling_convention": "fastcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetVertexShaderConstant1Fast(ecx Register, edx pConstantData)",
+    "raw": "D3D8LTCG__FUN__fastcall__D3DDevice_SetVertexShaderConstant1Fast(ecx Register, edx pConstantData) = 0x0034fc40"
+  },
+  "0x0034fc90": {
+    "calling_convention": "fastcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetVertexShaderConstant4(ecx Register, edx pConstantData)",
+    "raw": "D3D8LTCG__FUN__fastcall__D3DDevice_SetVertexShaderConstant4(ecx Register, edx pConstantData) = 0x0034fc90"
+  },
+  "0x0034fd40": {
+    "calling_convention": "fastcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetVertexShaderConstantNotInlineFast(ecx Register, edx pConstantData, psh ConstantCount)",
+    "raw": "D3D8LTCG__FUN__fastcall__D3DDevice_SetVertexShaderConstantNotInlineFast(ecx Register, edx pConstantData, psh ConstantCount) = 0x0034fd40"
+  },
+  "0x0034ff20": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DSurface_GetDesc(psh pThis, psh pDesc)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DSurface_GetDesc(psh pThis, psh pDesc) = 0x0034ff20"
+  },
+  "0x0034ff60": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_CreateVertexBuffer2(psh Length)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_CreateVertexBuffer2(psh Length) = 0x0034ff60"
+  },
+  "0x0034ffb0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DVertexBuffer_Lock2(psh pVertexBuffer, psh Flags)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DVertexBuffer_Lock2(psh pVertexBuffer, psh Flags) = 0x0034ffb0"
+  },
+  "0x00350040": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DPalette_Lock2(psh pThis, psh Flags)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DPalette_Lock2(psh pThis, psh Flags) = 0x00350040"
+  },
+  "0x00350120": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_DrawVerticesUP(psh PrimitiveType, psh VertexCount, psh pVertexStreamZeroData, psh VertextStreamZeroStride)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_DrawVerticesUP(psh PrimitiveType, psh VertexCount, psh pVertexStreamZeroData, psh VertextStreamZeroStride) = 0x00350120"
+  },
+  "0x003502d0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_DrawVertices(psh PrimitiveType, psh StartVertex, psh VertexCount)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_DrawVertices(psh PrimitiveType, psh StartVertex, psh VertexCount) = 0x003502d0"
+  },
+  "0x003503a0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_DrawIndexedVertices(psh PrimitiveType, eax VertexCount, psh pIndexData)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_DrawIndexedVertices(psh PrimitiveType, eax VertexCount, psh pIndexData) = 0x003503a0"
+  },
+  "0x00350680": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetVertexData2f(psh Register, psh a, psh b)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetVertexData2f(psh Register, psh a, psh b) = 0x00350680"
+  },
+  "0x003506c0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_End()",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_End() = 0x003506c0"
+  },
+  "0x00351430": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_Swap(psh Flags)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_Swap(psh Flags) = 0x00351430"
+  },
+  "0x003515e0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_CreateTexture2(psh Width, psh Height, psh Levels, psh Usage, psh Format, psh D3DResource)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_CreateTexture2(psh Width, psh Height, psh Levels, psh Usage, psh Format, psh D3DResource) = 0x003515e0"
+  },
+  "0x00351690": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DTexture_GetSurfaceLevel2(psh pThis, psh Level)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DTexture_GetSurfaceLevel2(psh pThis, psh Level) = 0x00351690"
+  },
+  "0x003516e0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DTexture_LockRect(psh pThis, psh Level, psh pLockedRect, psh pRect, psh Flags)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DTexture_LockRect(psh pThis, psh Level, psh pLockedRect, psh pRect, psh Flags) = 0x003516e0"
+  },
+  "0x00351710": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DCubeTexture_GetCubeMapSurface2(psh this, psh FaceType, psh Level)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DCubeTexture_GetCubeMapSurface2(psh this, psh FaceType, psh Level) = 0x00351710"
+  },
+  "0x00351830": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3D_SetFence(psh Flags)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3D_SetFence(psh Flags) = 0x00351830"
+  },
+  "0x00351b10": {
+    "calling_convention": "unknown",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3D_BlockOnTime_4__LTCG_eax1(eax Time, psh MakeSpace)",
+    "raw": "D3D8LTCG__FUN__unknown__D3D_BlockOnTime_4__LTCG_eax1(eax Time, psh MakeSpace) = 0x00351b10"
+  },
+  "0x00351c80": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3D_MakeRequestedSpace_8(psh MinimumSpace, psh RequestedSpace)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3D_MakeRequestedSpace_8(psh MinimumSpace, psh RequestedSpace) = 0x00351c80"
+  },
+  "0x00351dc0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_MakeSpace()",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_MakeSpace() = 0x00351dc0"
+  },
+  "0x00351dd0": {
+    "calling_convention": "unknown",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "CDevice_KickOff_0__LTCG_edx1(edx this)",
+    "raw": "D3D8LTCG__FUN__unknown__CDevice_KickOff_0__LTCG_edx1(edx this) = 0x00351dd0"
+  },
+  "0x00351ef0": {
+    "calling_convention": "fastcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3D_BlockOnResource_0__LTCG_ecx1(ecx pResource)",
+    "raw": "D3D8LTCG__FUN__fastcall__D3D_BlockOnResource_0__LTCG_ecx1(ecx pResource) = 0x00351ef0"
+  },
+  "0x00351fa0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_IsFencePending(psh Fence)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_IsFencePending(psh Fence) = 0x00351fa0"
+  },
+  "0x00351fc0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_BeginPush_4(psh Count)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_BeginPush_4(psh Count) = 0x00351fc0"
+  },
+  "0x00352020": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_EndPush(psh pPush)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_EndPush(psh pPush) = 0x00352020"
+  },
+  "0x003520a0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "Direct3D_CreateDevice(psh Adapter, psh DeviceType, psh hFocusWindow, psh BehaviorFlags, psh pPresentationParameters, psh ppReturnedDeviceInterface)",
+    "raw": "D3D8LTCG__FUN__stdcall__Direct3D_CreateDevice(psh Adapter, psh DeviceType, psh hFocusWindow, psh BehaviorFlags, psh pPresentationParameters, psh ppReturnedDeviceInterface) = 0x003520a0"
+  },
+  "0x00352590": {
+    "calling_convention": "unknown",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "Get2DSurfaceDesc_0__LTCG_edi1_ebx2_esi3(edi pPixelContainer, ebx Level, esi pDesc)",
+    "raw": "D3D8LTCG__FUN__unknown__Get2DSurfaceDesc_0__LTCG_edi1_ebx2_esi3(edi pPixelContainer, ebx Level, esi pDesc) = 0x00352590"
+  },
+  "0x00352870": {
+    "calling_convention": "unknown",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "Lock2DSurface_16__LTCG_esi4_eax5(psh pPixelContainer, psh FaceType, psh Level, esi pLockedRect, eax pRect, psh Flags)",
+    "raw": "D3D8LTCG__FUN__unknown__Lock2DSurface_16__LTCG_esi4_eax5(psh pPixelContainer, psh FaceType, psh Level, esi pLockedRect, eax pRect, psh Flags) = 0x00352870"
+  },
+  "0x00354540": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "CDevice_FreeFrameBuffers_4(psh this)",
+    "raw": "D3D8LTCG__FUN__stdcall__CDevice_FreeFrameBuffers_4(psh this) = 0x00354540"
+  },
+  "0x00354750": {
+    "calling_convention": "unknown",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "CDevice_InitializeFrameBuffers_4__LTCG_edi1(edi this, psh pPresentationParams)",
+    "raw": "D3D8LTCG__FUN__unknown__CDevice_InitializeFrameBuffers_4__LTCG_edi1(edi this, psh pPresentationParams) = 0x00354750"
+  },
+  "0x00354d20": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_EdgeAntiAlias(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_EdgeAntiAlias(psh Value) = 0x00354d20"
+  },
+  "0x00354d60": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_ShadowFunc(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_ShadowFunc(psh Value) = 0x00354d60"
+  },
+  "0x00354da0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_FogColor(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_FogColor(psh Value) = 0x00354da0"
+  },
+  "0x00354e00": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_CullMode(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_CullMode(psh Value) = 0x00354e00"
+  },
+  "0x00354e80": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_FrontFace(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_FrontFace(psh Value) = 0x00354e80"
+  },
+  "0x00354ed0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_NormalizeNormals(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_NormalizeNormals(psh Value) = 0x00354ed0"
+  },
+  "0x00354f20": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_ZEnable(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_ZEnable(psh Value) = 0x00354f20"
+  },
+  "0x00354fc0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_StencilEnable(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_StencilEnable(psh Value) = 0x00354fc0"
+  },
+  "0x00355070": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_StencilFail(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_StencilFail(psh Value) = 0x00355070"
+  },
+  "0x003550f0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_TextureFactor(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_TextureFactor(psh Value) = 0x003550f0"
+  },
+  "0x00355150": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_LineWidth(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_LineWidth(psh Value) = 0x00355150"
+  },
+  "0x003551c0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_Dxt1NoiseEnable(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_Dxt1NoiseEnable(psh Value) = 0x003551c0"
+  },
+  "0x00355240": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_YuvEnable(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_YuvEnable(psh Value) = 0x00355240"
+  },
+  "0x00355280": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_OcclusionCullEnable(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_OcclusionCullEnable(psh Value) = 0x00355280"
+  },
+  "0x003552f0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_StencilCullEnable(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_StencilCullEnable(psh Value) = 0x003552f0"
+  },
+  "0x00355360": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_RopZCmpAlwaysRead(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_RopZCmpAlwaysRead(psh Value) = 0x00355360"
+  },
+  "0x00355380": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_RopZRead(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_RopZRead(psh Value) = 0x00355380"
+  },
+  "0x003553a0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_DoNotCullUncompressed(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_DoNotCullUncompressed(psh Value) = 0x003553a0"
+  },
+  "0x003553c0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_ZBias(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_ZBias(psh Value) = 0x003553c0"
+  },
+  "0x00355470": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_MultiSampleMode(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_MultiSampleMode(psh Value) = 0x00355470"
+  },
+  "0x003554a0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_MultiSampleRenderTargetMode(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_MultiSampleRenderTargetMode(psh Value) = 0x003554a0"
+  },
+  "0x003554d0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_MultiSampleAntiAlias(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_MultiSampleAntiAlias(psh Value) = 0x003554d0"
+  },
+  "0x00355510": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_MultiSampleMask(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_MultiSampleMask(psh Value) = 0x00355510"
+  },
+  "0x00355530": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_SampleAlpha(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_SampleAlpha(psh Value) = 0x00355530"
+  },
+  "0x00355550": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_LogicOp(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_LogicOp(psh Value) = 0x00355550"
+  },
+  "0x003555b0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_FillMode(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_FillMode(psh Value) = 0x003555b0"
+  },
+  "0x00355600": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_BackFillMode(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_BackFillMode(psh Value) = 0x00355600"
+  },
+  "0x00355620": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_TwoSidedLighting(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_TwoSidedLighting(psh Value) = 0x00355620"
+  },
+  "0x00355680": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_VertexBlend(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_VertexBlend(psh Value) = 0x00355680"
+  },
+  "0x003556d0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_PSTextureModes(psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderState_PSTextureModes(psh Value) = 0x003556d0"
+  },
+  "0x00355700": {
+    "calling_convention": "fastcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderState_Simple(ecx Method, edx Value)",
+    "raw": "D3D8LTCG__FUN__fastcall__D3DDevice_SetRenderState_Simple(ecx Method, edx Value) = 0x00355700"
+  },
+  "0x00355730": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetRenderStateNotInline(psh State, psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetRenderStateNotInline(psh State, psh Value) = 0x00355730"
+  },
+  "0x00355790": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetTextureState_TexCoordIndex(psh Stage, psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetTextureState_TexCoordIndex(psh Stage, psh Value) = 0x00355790"
+  },
+  "0x003558a0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetTextureState_BumpEnv(psh Stage, psh Type, psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetTextureState_BumpEnv(psh Stage, psh Type, psh Value) = 0x003558a0"
+  },
+  "0x00355910": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetTextureState_BorderColor(psh Stage, psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetTextureState_BorderColor(psh Stage, psh Value) = 0x00355910"
+  },
+  "0x00355960": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetTextureState_ColorKeyColor(psh Stage, psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetTextureState_ColorKeyColor(psh Stage, psh Value) = 0x00355960"
+  },
+  "0x003559b0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_SetTextureStageStateNotInline(psh Stage, psh Type, psh Value)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_SetTextureStageStateNotInline(psh Stage, psh Type, psh Value) = 0x003559b0"
+  },
+  "0x00355b10": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3DDevice_GetViewportOffsetAndScale(psh pOffset, psh pScale)",
+    "raw": "D3D8LTCG__FUN__stdcall__D3DDevice_GetViewportOffsetAndScale(psh pOffset, psh pScale) = 0x00355b10"
+  },
+  "0x00355ef0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3D_CommonSetDebugRegisters()",
+    "raw": "D3D8LTCG__FUN__stdcall__D3D_CommonSetDebugRegisters() = 0x00355ef0"
+  },
+  "0x00355fd0": {
+    "calling_convention": "unknown",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3D_CommonSetMultiSampleModeAndScale_4__LTCG_eax1(eax this, psh pViewport)",
+    "raw": "D3D8LTCG__FUN__unknown__D3D_CommonSetMultiSampleModeAndScale_4__LTCG_eax1(eax this, psh pViewport) = 0x00355fd0"
+  },
+  "0x003562f0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "D3D_UpdateProjectionViewportTransform()",
+    "raw": "D3D8LTCG__FUN__stdcall__D3D_UpdateProjectionViewportTransform() = 0x003562f0"
+  },
+  "0x00356430": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "CMiniport_InitHardware_4(psh this)",
+    "raw": "D3D8LTCG__FUN__stdcall__CMiniport_InitHardware_4(psh this) = 0x00356430"
+  },
+  "0x003579c9": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "CMiniport_GetDisplayCapabilities()",
+    "raw": "D3D8LTCG__FUN__stdcall__CMiniport_GetDisplayCapabilities() = 0x003579c9"
+  },
+  "0x003593e0": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "CDevice_SetStateVB_8(psh this, psh unknown2)",
+    "raw": "D3D8LTCG__FUN__stdcall__CDevice_SetStateVB_8(psh this, psh unknown2) = 0x003593e0"
+  },
+  "0x00359590": {
+    "calling_convention": "unknown",
+    "kind": "FUN",
+    "library": "D3D8LTCG",
+    "name": "CDevice_SetStateUP_0__LTCG_esi1(esi this)",
+    "raw": "D3D8LTCG__FUN__unknown__CDevice_SetStateUP_0__LTCG_esi1(esi this) = 0x00359590"
+  },
+  "0x0035d660": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8LTCG",
+    "name": "D3D_g_Stream",
+    "raw": "D3D8LTCG__VAR__D3D_g_Stream = 0x0035d660"
+  },
+  "0x0035d838": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8LTCG",
+    "name": "D3D_g_DeferredTextureState",
+    "raw": "D3D8LTCG__VAR__D3D_g_DeferredTextureState = 0x0035d838"
+  },
+  "0x0035fee8": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8LTCG",
+    "name": "D3D_g_pDevice",
+    "raw": "D3D8LTCG__VAR__D3D_g_pDevice = 0x0035fee8"
+  },
+  "0x0035fef8": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3D_g_RenderState",
+    "raw": "D3D8__VAR__D3D_g_RenderState = 0x0035fef8"
+  },
+  "0x00360068": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3D_g_DeferredRenderState",
+    "raw": "D3D8__VAR__D3D_g_DeferredRenderState = 0x00360068"
+  },
+  "0x00360118": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3D_g_ComplexRenderState",
+    "raw": "D3D8__VAR__D3D_g_ComplexRenderState = 0x00360118"
+  },
+  "0x00360124": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_FillMode",
+    "raw": "D3D8__VAR__D3DRS_FillMode = 0x00360124"
+  },
+  "0x00360128": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_BackFillMode",
+    "raw": "D3D8__VAR__D3DRS_BackFillMode = 0x00360128"
+  },
+  "0x0036012c": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_TwoSidedLighting",
+    "raw": "D3D8__VAR__D3DRS_TwoSidedLighting = 0x0036012c"
+  },
+  "0x00360138": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_StencilEnable",
+    "raw": "D3D8__VAR__D3DRS_StencilEnable = 0x00360138"
+  },
+  "0x0036013c": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_StencilFail",
+    "raw": "D3D8__VAR__D3DRS_StencilFail = 0x0036013c"
+  },
+  "0x00360140": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_FrontFace",
+    "raw": "D3D8__VAR__D3DRS_FrontFace = 0x00360140"
+  },
+  "0x00360144": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_CullMode",
+    "raw": "D3D8__VAR__D3DRS_CullMode = 0x00360144"
+  },
+  "0x0036014c": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_ZBias",
+    "raw": "D3D8__VAR__D3DRS_ZBias = 0x0036014c"
+  },
+  "0x00360150": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_LogicOp",
+    "raw": "D3D8__VAR__D3DRS_LogicOp = 0x00360150"
+  },
+  "0x00360158": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_MultiSampleAntiAlias",
+    "raw": "D3D8__VAR__D3DRS_MultiSampleAntiAlias = 0x00360158"
+  },
+  "0x0036015c": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_MultiSampleMask",
+    "raw": "D3D8__VAR__D3DRS_MultiSampleMask = 0x0036015c"
+  },
+  "0x00360160": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_MultiSampleMode",
+    "raw": "D3D8__VAR__D3DRS_MultiSampleMode = 0x00360160"
+  },
+  "0x00360164": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_MultiSampleRenderTargetMode",
+    "raw": "D3D8__VAR__D3DRS_MultiSampleRenderTargetMode = 0x00360164"
+  },
+  "0x00360170": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_SampleAlpha",
+    "raw": "D3D8__VAR__D3DRS_SampleAlpha = 0x00360170"
+  },
+  "0x00360174": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_Dxt1NoiseEnable",
+    "raw": "D3D8__VAR__D3DRS_Dxt1NoiseEnable = 0x00360174"
+  },
+  "0x00360178": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_YuvEnable",
+    "raw": "D3D8__VAR__D3DRS_YuvEnable = 0x00360178"
+  },
+  "0x0036017c": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_OcclusionCullEnable",
+    "raw": "D3D8__VAR__D3DRS_OcclusionCullEnable = 0x0036017c"
+  },
+  "0x00360180": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_StencilCullEnable",
+    "raw": "D3D8__VAR__D3DRS_StencilCullEnable = 0x00360180"
+  },
+  "0x00360184": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_RopZCmpAlwaysRead",
+    "raw": "D3D8__VAR__D3DRS_RopZCmpAlwaysRead = 0x00360184"
+  },
+  "0x00360188": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_RopZRead",
+    "raw": "D3D8__VAR__D3DRS_RopZRead = 0x00360188"
+  },
+  "0x0036018c": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "D3D8",
+    "name": "D3DRS_DoNotCullUncompressed",
+    "raw": "D3D8__VAR__D3DRS_DoNotCullUncompressed = 0x0036018c"
+  },
+  "0x00362e84": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "XAPILIB",
+    "name": "g_DeviceTypeInfoTableBegin",
+    "raw": "XAPILIB__VAR__g_DeviceTypeInfoTableBegin = 0x00362e84"
+  },
+  "0x00362e8c": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "XAPILIB",
+    "name": "g_DeviceTypeInfoTableEnd",
+    "raw": "XAPILIB__VAR__g_DeviceTypeInfoTableEnd = 0x00362e8c"
+  },
+  "0x00362ebc": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "XAPILIB",
+    "name": "g_DeviceType_Gamepad",
+    "raw": "XAPILIB__VAR__g_DeviceType_Gamepad = 0x00362ebc"
+  },
+  "0x00362f20": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "XAPILIB",
+    "name": "g_DeviceType_IRDongle",
+    "raw": "XAPILIB__VAR__g_DeviceType_IRDongle = 0x00362f20"
+  },
+  "0x00363088": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "XAPILIB",
+    "name": "g_DeviceType_MU",
+    "raw": "XAPILIB__VAR__g_DeviceType_MU = 0x00363088"
+  },
+  "0x0036330f": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XInitDevices(psh dwPreallocTypeCount, psh PreallocTypes)",
+    "raw": "XAPILIB__FUN__stdcall__XInitDevices(psh dwPreallocTypeCount, psh PreallocTypes) = 0x0036330f"
+  },
+  "0x00363405": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "IUsbInit_GetMaxDeviceTypeCount(ecx this, psh DeviceType)",
+    "raw": "XAPILIB__FUN__thiscall__IUsbInit_GetMaxDeviceTypeCount(ecx this, psh DeviceType) = 0x00363405"
+  },
+  "0x00363eb8": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "MU_Init(psh pThis)",
+    "raw": "XAPILIB__FUN__stdcall__MU_Init(psh pThis) = 0x00363eb8"
+  },
+  "0x00363fc4": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XInputOpen(psh DeviceType, psh dwPort, psh dwSlot, psh pPollingParameters)",
+    "raw": "XAPILIB__FUN__stdcall__XInputOpen(psh DeviceType, psh dwPort, psh dwSlot, psh pPollingParameters) = 0x00363fc4"
+  },
+  "0x0036401a": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XInputClose(psh hDevice)",
+    "raw": "XAPILIB__FUN__stdcall__XInputClose(psh hDevice) = 0x0036401a"
+  },
+  "0x00364026": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XInputGetState(psh hDevice, psh pState)",
+    "raw": "XAPILIB__FUN__stdcall__XInputGetState(psh hDevice, psh pState) = 0x00364026"
+  },
+  "0x00364099": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XInputSetState(psh hDevice, psh pFeedback)",
+    "raw": "XAPILIB__FUN__stdcall__XInputSetState(psh hDevice, psh pFeedback) = 0x00364099"
+  },
+  "0x0036412f": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XGetDevices(psh DeviceType)",
+    "raw": "XAPILIB__FUN__stdcall__XGetDevices(psh DeviceType) = 0x0036412f"
+  },
+  "0x00364151": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XGetDeviceChanges(psh DeviceType, psh pdwInsertions, psh pdwRemovals)",
+    "raw": "XAPILIB__FUN__stdcall__XGetDeviceChanges(psh DeviceType, psh pdwInsertions, psh pdwRemovals) = 0x00364151"
+  },
+  "0x003641be": {
+    "calling_convention": "fastcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "GetTypeInformation2(cl XidType, edx pTypeIndex)",
+    "raw": "XAPILIB__FUN__fastcall__GetTypeInformation2(cl XidType, edx pTypeIndex) = 0x003641be"
+  },
+  "0x003641f5": {
+    "calling_convention": "fastcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "GetTypeInformation(ecx XppType)",
+    "raw": "XAPILIB__FUN__fastcall__GetTypeInformation(ecx XppType) = 0x003641f5"
+  },
+  "0x003649fc": {
+    "calling_convention": "thiscall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XID_fCloseDevice(ecx this)",
+    "raw": "XAPILIB__FUN__thiscall__XID_fCloseDevice(ecx this) = 0x003649fc"
+  },
+  "0x00365a75": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XGetDeviceEnumerationStatus()",
+    "raw": "XAPILIB__FUN__stdcall__XGetDeviceEnumerationStatus() = 0x00365a75"
+  },
+  "0x0036a253": {
+    "calling_convention": "stdcall",
+    "kind": "FUN",
+    "library": "XAPILIB",
+    "name": "XReadMUMetaData(psh dwPort, psh dwSlot, psh lpBuffer, psh dwByteOffset, psh dwNumberOfBytesToRead)",
+    "raw": "XAPILIB__FUN__stdcall__XReadMUMetaData(psh dwPort, psh dwSlot, psh lpBuffer, psh dwByteOffset, psh dwNumberOfBytesToRead) = 0x0036a253"
+  },
+  "0x003c0554": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "XAPILIB",
+    "name": "XapiThreadNotifyRoutineList",
+    "raw": "XAPILIB__VAR__XapiThreadNotifyRoutineList = 0x003c0554"
+  },
+  "0x0041ab90": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "XAPILIB",
+    "name": "g_XapiMountedMUs",
+    "raw": "XAPILIB__VAR__g_XapiMountedMUs = 0x0041ab90"
+  },
+  "0x0041ab94": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "XAPILIB",
+    "name": "_tls_index",
+    "raw": "XAPILIB__VAR___tls_index = 0x0041ab94"
+  },
+  "0x00755164": {
+    "calling_convention": null,
+    "kind": "VAR",
+    "library": "XAPILIB",
+    "name": "g_XapiCurrentTopLevelFilter",
+    "raw": "XAPILIB__VAR__g_XapiCurrentTopLevelFilter = 0x00755164"
+  }
+}
