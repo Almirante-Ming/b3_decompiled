@@ -1286,3 +1286,57 @@ devolvem.
 ferramentas que nao leem XBE. O REA carrega, mas estourou 5 min decompilando
 uma funcao de 1678 bytes neste binario de 4 MB -- util para funcoes pequenas,
 nao para as grandes.
+
+## RESOLVIDO: a tela de loading esperava o Xbox Live (14/out)
+
+O jogo passa da tela de loading. Carrega `Data/stagehed.bin`,
+`tracks/US/C5_V1/enviro.dat` e `static.dat`, `_EATrax0.xwb`, `sound/fe.awd`,
+`ovid/movie.xwb`, `ovid/englis30.xmv` e `cri_rw30.xmv`, e mostra o logo da
+Criterion Games animando.
+
+### A causa
+
+A etapa 10 da maquina de loading espera um item numa lista em `0x00363088`.
+Varrendo o binario inteiro atras de quem a alimenta -- decodificando cada
+`e8 rel32` das secoes de codigo -- ha exatamente tres sitios de insercao:
+
+```
+.text    0x0024E26C   push 0x00362FF4   <- OUTRA lista
+.text    0x0024E27B   push 0x00363000   <- OUTRA lista
+XONLINE  0x0031BDA9   push 0x00363088   <- esta, e so ela
+```
+
+O unico produtor esta na secao XONLINE. Medido: a cabeca da lista fica em 0 a
+execucao inteira. Offline esse produtor nunca roda, e o consumidor espera para
+sempre. Bate com `sub_0031BCA4` devolver `0x80150005` (faixa de erro do Xbox
+Live) e com os campos `USRPTR`/`NUMUSR`/`VOCBAN` do registro de diagnostico.
+
+### O conserto
+
+O proprio titulo previu a saida: `sub_00210CF0` arma um prazo de 15 s em
+`+0x17BC`. Mas `sub_00210B60` so confere esse prazo enquanto `+0x17A4` vale 1;
+quando passa a 2 -- que e onde travamos -- nao ha mais nenhuma verificacao de
+tempo. **O timeout existe e nao cobre o estado em que o jogo fica preso.**
+
+O contorno (`recomp_manual.c`, o lugar projetado para overrides a mao) engancha
+`sub_00210B60`, que so e alcancavel por ponteiro, e honra o prazo que o titulo
+armou: vencido ele, avanca o status de 2 para 3 -- exatamente a transicao que
+`sub_00210B60` faria se `sub_00215650` tivesse respondido. Nao inventa dado
+nenhum e nao tem numero para ajustar; o log confirma 15016 ms, o proprio prazo
+do titulo. `RECOMP_SKIP_LIVE_WAIT=0` desliga.
+
+Duas armadilhas no caminho, as duas medidas e nao supostas:
+
+- A bomba de callbacks passa o contexto em `eax`, nao na pilha. Ler `g_esp+4`
+  pegava lixo e o gancho nunca disparava, sem erro nenhum -- so silencio. O
+  objeto e lido do global `0x0057C074`.
+- `recomp_lookup_manual` so intercepta chamadas **indiretas**. `sub_00215650`,
+  que seria o alvo mais obvio, e chamada direto e nao daria para enganchar.
+
+### Metodo
+
+Quatro hipoteses caidas antes desta, todas por medicao e nao por argumento:
+acordar perdido na fila de trabalhos (553 cutucadas, nada), callback nunca
+invocado (ele roda), relogio congelado (anda, ~1000/s), DPC nao drenado
+(ordinal 119 nunca e chamado). Cada queda custou minutos porque o ciclo de
+build/instalar/rodar/ler e local.
