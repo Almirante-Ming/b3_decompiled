@@ -162,9 +162,19 @@ burnout3_decompiled/
       Ou seja: escrever assinaturas OOVPA para `XGRAPHCL`/`XVOICE`/`XMV` é
       um trabalho real e autocontido (e dá pra contribuir de volta pro
       Cxbx-Reloaded), não uma questão de reconfiguração.
-- [ ] Levantar/adaptar assinaturas RenderWare 3.6 a partir de RE pública de
-      GTA III/VC/SA (mesma geração de engine) — XbSymbolDatabase não cobre
-      middleware de terceiro.
+- [x] RenderWare 3.6: sem banco de assinaturas pronto pra Xbox. Usamos
+      [ifarbod/renderware3-flirt](https://github.com/ifarbod/renderware3-flirt)
+      (FLIRT da RW 3.6.0.3 compilada p/ GTA SA PC, D3D9, outro
+      compilador/plataforma) via `tools/signatures/flirt_match.py` — matcher
+      FLIRT standalone em Python puro (porque o script Jython original só
+      roda no Ghidra <12). Resultado: **13 funções confiáveis** aplicadas
+      no Ghidra, de 33 matches brutos (resto era ruído: D3DX/libpng/CRT de
+      uma ferramenta de conversão offline, e colisões em funções curtas).
+      Yield baixo era esperado — FLIRT exige quase paridade byte-a-byte, e
+      aqui plataforma/compilador diferem. Ver `tools/signatures/README.md`.
+- [ ] As ~90 unidades de compilação da RenderWare identificadas pelos
+      `$Id:` do Perforce (seção 2) vão precisar de decompilação manual —
+      não há mais atalho de assinatura conhecido pra explorar aqui.
 - [ ] Saída: tabela (JSON/markdown) com status por função
       (`resolved_library` / `unresolved_game` / `thunk`).
 

@@ -492,9 +492,37 @@ def main():
     with open(args.out, "w") as f:
         for addr, (lib, name) in sorted(results.items()):
             f.write(f"0x{addr:08x}\t{lib}\tFUN\t{name}\n")
-
     print(f"Matched {len(results)} addresses ({errors} .sig files failed to parse)")
-    print(f"Wrote: {args.out}")
+    print(f"Wrote (raw): {args.out}")
+
+    # Cross-platform/cross-compiler FLIRT matching is noisy: the sig set
+    # also bundles non-RenderWare libraries (D3DX, libpng, CRT) that were
+    # statically linked into the PC build it was captured from, and short
+    # generic functions collide across unrelated modules. Keep only names
+    # following RenderWare's actual C naming convention (Rw=core,
+    # Rp=plugin, Rt=toolkit, one or two leading underscores for C linkage),
+    # explicitly drop anything D3D9-specific (Xbox only ever had D3D8), and
+    # drop any name that matched more than one address (ambiguous/short
+    # pattern collision).
+    import re
+    name_counts = {}
+    for addr, (lib, name) in results.items():
+        name_counts[name] = name_counts.get(name, 0) + 1
+
+    rw_name_re = re.compile(r"^_{1,2}[Rr][WwpPtT][A-Za-z0-9_]*$")
+    confident = {
+        addr: (lib, name)
+        for addr, (lib, name) in results.items()
+        if name_counts[name] == 1
+        and rw_name_re.match(name)
+        and "D3D9" not in name.upper()
+    }
+
+    confident_path = args.out.rsplit(".", 1)[0] + ".confident.tsv"
+    with open(confident_path, "w") as f:
+        for addr, (lib, name) in sorted(confident.items()):
+            f.write(f"0x{addr:08x}\t{lib}\tFUN\t{name}\n")
+    print(f"Confident subset: {len(confident)} addresses -> {confident_path}")
 
 
 if __name__ == "__main__":

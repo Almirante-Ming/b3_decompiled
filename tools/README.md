@@ -21,9 +21,16 @@ Ferramentas de análise validadas durante a investigação inicial (ver SPEC.md)
 - `ghidra/scripts/ProbeStrings.java` — varre strings definidas procurando
   padrões conhecidos (RenderWare, caminhos de debug, etc.) — foi assim que
   identificamos a RenderWare 3.6 pelos `$Id:` do Perforce.
-- `ghidra/scripts/ApplyLibraryMatches.java` — lê o `.tsv` gerado por
-  `signatures/parse_matches.py` e renomeia funções / rotula variáveis no
-  projeto Ghidra persistente (ver `signatures/README.md`).
+- `ghidra/scripts/ApplyLibraryMatches.java` — lê um `.tsv`
+  (`address\tlibrary\tkind\tname`) e renomeia funções / rotula variáveis no
+  projeto Ghidra persistente. Consumido tanto por
+  `signatures/parse_matches.py` (XbSymbolDatabase) quanto por
+  `signatures/flirt_match.py` (RenderWare FLIRT) — mesmo formato de saída.
+- `ghidra/scripts/ExportFunctionAddresses.java` — exporta todo endereço de
+  função já conhecido pelo Ghidra (início, fim, nome, se é nome
+  padrão/`FUN_*`) pra um `.tsv`, pra ferramentas externas (ex.
+  `flirt_match.py`) trabalharem com os mesmos limites de função sem
+  precisar rodar dentro do Ghidra.
 - `ghidra/run_analysis.sh` — wrapper do `analyzeHeadless`. Exige
   `GHIDRA_INSTALL_DIR` apontando para um Ghidra 12.1.x extraído e um JDK 21+
   no PATH.
@@ -39,7 +46,8 @@ Ferramentas de análise validadas durante a investigação inicial (ver SPEC.md)
   ```
 
 - `signatures/` — Fase 1: `setup.sh` clona+compila o `XbSymbolDatabase` do
-  Cxbx-Reloaded (MIT), `parse_matches.py` estrutura a saída. Ver
-  `signatures/README.md` pros resultados no `default.xbe` e as lacunas
-  conhecidas do banco (XGRAPHCL/XVOICE/XMV). Assinaturas de RenderWare ainda
-  não começadas.
+  Cxbx-Reloaded (MIT) pra bibliotecas XDK, `flirt_match.py` faz matching
+  FLIRT standalone (sem Ghidra/Jython) pra RenderWare usando sigs públicas
+  de GTA SA PC. `parse_matches.py` estrutura ambas as saídas no mesmo
+  formato de `.tsv`. Ver `signatures/README.md` pros números e lacunas
+  conhecidas.

@@ -81,5 +81,67 @@ provavelmente código inline). Total de funções com nome não-genérico:
 65 → **316 de 6.863 (~4,6%)**.
 
 **Próximo passo natural**: escrever assinaturas OOVPA próprias para
-`XGRAPHCL`/`XVOICE`/`XMV` (contribuível de volta ao Cxbx-Reloaded), ou já
-seguir pra RenderWare — que é a fatia maior e não tem ferramenta pronta.
+`XGRAPHCL`/`XVOICE`/`XMV` (contribuível de volta ao Cxbx-Reloaded) — ainda
+não feito, ver seção abaixo pra RenderWare.
+
+## RenderWare 3.6 — FLIRT cross-platform matching
+
+Não existe banco de assinaturas pronto pra RenderWare no Xbox. O mais
+próximo publicamente disponível é
+[ifarbod/renderware3-flirt](https://github.com/ifarbod/renderware3-flirt):
+599 arquivos `.sig` (formato IDA FLIRT) gerados a partir do **RenderWare
+3.6.0.3, compilado com VC7 para x86 — mas pra GTA San Andreas PC, build
+D3D9 Release**, não pra Xbox/D3D8. Mesma versão major.minor da engine
+(3.6) e mesma arquitetura (x86), mas plataforma/driver gráfico e compilador
+diferentes.
+
+```
+git clone https://github.com/ifarbod/renderware3-flirt.git   # não versionado (ver .gitignore)
+
+python3 flirt_match.py <dump>/default.xbe \
+    ../../docs/findings/ghidra_function_addresses.tsv \
+    renderware3-flirt/rw3603_vc7_x86 \
+    --out ../../docs/findings/renderware_flirt_matches.tsv
+```
+
+`flirt_match.py` é uma reimplementação standalone (puro Python 3, sem
+Ghidra) do parser/matcher FLIRT, portada de
+[NWMonster/ApplySig](https://github.com/NWMonster/ApplySig) — que só roda
+no Jython antigo do Ghidra, removido na versão 12. Em vez de depender do
+Ghidra em tempo real, ela lê os endereços de função já exportados
+(`ExportFunctionAddresses.java`) e testa cada um contra cada `.sig`.
+
+**Resultado no `default.xbe`**: 33 matches brutos em 599 arquivos de
+assinatura, mas a maioria é ruído — o conjunto de `.sig` também carrega
+bibliotecas de terceiro que nada têm a ver com o motor (D3DX, libpng, CRT
+genérica como `logf`), prováveis de uma ferramenta de conversão de textura
+offline do SDK PC, e colisões em funções curtas (`RpLODAtomicSetCamera`
+batendo em 4 endereços diferentes). Filtrando por convenção de nomes real
+da RenderWare (`Rw`/`Rp`/`Rt`, prefixo C) e descartando ambiguidades e
+qualquer coisa `D3D9` (Xbox só tem D3D8): **13 matches confiáveis**,
+salvos em `renderware_flirt_matches.confident.tsv` e já aplicados no
+Ghidra:
+
+| Endereço | Nome |
+|---|---|
+| 0x001b3990 | `RpSkinGetVertexBoneWeights` |
+| 0x001d9640 | `RwCameraEndUpdate` |
+| 0x001d9650 | `RwCameraBeginUpdate` |
+| 0x001dc110 | `rpLtMapGenericPipelinesDestroy` |
+| 0x001dd640 | `RwFrameGetLTM` |
+| 0x001e0a00 | `RwMatrixUpdate` |
+| 0x001e1140 | `RwFreeListPurgeAllFreeLists` |
+| 0x001e8620 | `rwpathisabsolute` |
+| 0x001e8ed0 | `rwIm3DCreatePlatformTransformPipeline` |
+| 0x001fcd80 | `RtFileSystemIsDefaultedToAsync` |
+| 0x00211620 | `rt2dMaestroGetAnimNodeByIndex` |
+| 0x0021c5e0 | `RpSkinGetVertexBoneIndices` |
+| 0x0021c7a0 | `rpSkinGetMeshBoneRLECount` |
+
+**Conclusão**: matching cross-plataforma/cross-compilador rende pouco
+(13 de ~6.500 funções ainda sem nome) porque FLIRT exige correspondência
+quase byte-a-byte — build diferente, otimizações diferentes, já quebra a
+maioria dos matches. As ~90 unidades de compilação da RenderWare que já
+identificamos pelos `$Id:` (ver SPEC.md) vão precisar de decompilação
+manual mesmo; esses 13 nomes servem de ponto de partida/âncora, não de
+solução.
