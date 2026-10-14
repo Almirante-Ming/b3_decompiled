@@ -1028,3 +1028,63 @@ Eliminados por medicao, nao por argumento: PFB flush, portoes de DMA
 `partition0`. O jogo roda um laco estavel a ~120 fps, le todos os arquivos
 que pede, e a thread principal passa cada frame no caminho de present do D3D.
 Nada disso e o problema.
+
+## O bloqueio: handoff de dois eventos com acordar perdido (14/out)
+
+Primeiro, olhar a tela em vez de deduzi-la. `RECOMP_FB_DUMP=fb\f` com
+`RECOMP_NV2A_TRACE=1 RECOMP_PB_REPORT_MS=2000` escreve um BMP a cada 2 s.
+
+A tela renderiza **corretamente**: "LOADING / LADEN / CARGANDO / LADDAR"
+(PAL multi-idioma) e uma barra de progresso. Minha suspeita sobre textura
+estava errada -- o texto sai perfeito.
+
+A barra vai de 83px para 121px de 160 nos primeiros ~2 s e **para em 75,6%**.
+Do segundo frame em diante o framebuffer e byte-a-byte identico (mesmo md5
+nos 11 frames seguintes). Nao e lentidao: e parada.
+
+### Quem esta parado
+
+`[WAITLONG]` fatia esperas INFINITE em pedacos de 2 s e denuncia a primeira
+que estoura, uma linha por handle. `[SETEVENT]` (sob `RECOMP_EVENT_TRACE`)
+mostra as primeiras sinalizacoes por handle, com thread e call site.
+
+```
+[SETEVENT] tid 2804  sets 0x490 from 0x001D189D (#1..#3)
+[SETEVENT] tid 15780 sets 0x494 from 0x001D189D (#1..#3)
+[WAITLONG] tid 15780 blocked >2000 ms on handle 0x490 (INFINITE)
+```
+
+Um handoff ping-pong entre duas threads, os dois lados sinalizando do mesmo
+helper `0x001D189D`. A consumidora (15780) trava esperando `0x490`, que a
+produtora (2804) deveria sinalizar.
+
+E a produtora e a **thread principal de render**: host `0x...4724D90` menos a
+base do modulo da `0x141204D90` = `sub_00351DD0+0x190`, queimando 100% de CPU
+no caminho de espera da GPU. Ela nao esta travada -- faz 120 fps -- mas nunca
+chega ao ponto que sinalizaria `0x490`.
+
+### Por que isso e um acordar perdido, e nao so "a outra parou"
+
+`NtCreateEvent ... type=1` e **SynchronizationEvent**, ou seja auto-reset, nao
+manual-reset. Num auto-reset:
+
+- cada `NtSetEvent` libera **exatamente um** waiter;
+- sinalizar duas vezes antes de alguem esperar **nao acumula**: o evento fica
+  sinalizado uma vez e a segunda contagem se perde.
+
+Um handoff que depende de contagem perde um acordar nesse caso e trava as duas
+pontas para sempre. A barra parando exatamente num ponto e consistente com
+isso: as tres primeiras rodadas do ping-pong passam, e uma delas perde.
+
+### Proximo passo
+
+Contar, nao amostrar (de novo): quantas vezes `0x490` e sinalizado contra
+quantas vezes alguem espera por ele, e se o total de sets fica um abaixo do
+total de waits. Se ficar, o defeito esta na nossa semantica de evento ou na
+ordem em que o nosso `NtReadFile` sinaliza, nao na logica do titulo.
+
+Vale conferir tambem `xbox_NtReadFile`: ele so chama `SetEvent(Event)` no
+caminho de sucesso. Em `STATUS_END_OF_FILE` e em falha ele retorna **sem**
+sinalizar, entao qualquer chamador que espere naquele evento fica parado para
+sempre. Nao e o que trava aqui agora (o EOF de partition0 foi eliminado e o
+travamento continua), mas e um acordar perdido garantido esperando acontecer.
