@@ -891,3 +891,56 @@ escrita nunca depositar o bit** -- do jeito que os bits de reset do AC97 ja
 sao tratados neste arquivo, com a pagina em PAGE_READONLY e o handler
 mascarando. O comentario do AC97 ja dizia que a abordagem da tabela e
 inadequada para isso; eu nao o tinha lido como aviso.
+
+## O PFB flush era pista morta: o contador provou (14/out)
+
+`clears=` foi 0 -> 1 -> 2 -> ... -> 8 em 30 segundos. Nem zero, nem milhares:
+~0,27/s, contra ~110 passagens por segundo da thread de ack. Tivemos ~3300
+oportunidades e achamos o bit setado 8 vezes.
+
+A razao: `NV2A_ACK[0]` e `{ 0x100410, 0x10000 }` e limpa em
+`regs + 0x100410` = `0xFD100410`. O `pfbbase` medido e `0xFD000000`, logo
+`pfbbase + 0x100410` e **a mesma palavra**. A tabela sempre limpou no lugar
+certo; o `pfb_flush_ack_tick` que eu escrevi era um duplicado que perdia a
+corrida para a propria tabela. As 8 contagens sao essas corridas.
+
+Consequencias:
+
+- O flush **nunca** foi o bloqueio. O titulo o cicla uma vez por frame a
+  110 fps e nao fica preso nele -- a thread principal esta naquele laco porque
+  e ali que ela espera o frame.
+- As tres builds gastas nisso (espelho PFIFO, PGRAPH na tabela, tick do PFB)
+  nao podiam ter efeito. O espelho PFIFO e o PGRAPH seguem corretos pelos seus
+  proprios motivos; o tick foi removido, e o que ficou e um comentario na
+  entrada da tabela registrando a medicao, porque "o titulo usa outra base" e
+  o tipo de historia plausivel que custa um dia.
+
+### Estado atual, medido
+
+O jogo **progride**: `indirect calls +2766/3s`, draws subindo, fence
+avancando, 110 fps, todos os arquivos pedidos lidos. Ele so nao sai da tela
+de loading. Portoes de DMA todos abertos (`put == get`, `pgraph = 0`).
+
+### Instrumento novo
+
+`[SLEEP]` imprime o endereco de retorno e o intervalo de cada **call site
+distinto** de `KeDelayExecutionThread` (ordinal 99), uma linha por site, nao
+por chamada. Esse ordinal corre a ~10 Hz em regime estavel, que e a forma de
+um laco "espera e tenta de novo"; o endereco de retorno nomeia a funcao que
+espera, e o C recompilado dela declara o teste. A contagem sozinha nunca ia
+dizer qual condicao e.
+
+### Pista secundaria anotada
+
+`[READ] from=0x0033BFC8 @4608 want=512 got=0 st=0xC0000011` -- leitura de
+`partition0` em 4608 retorna EOF (o `@4096` passou a funcionar nesta
+execucao). O chamador esta em `XNET+0x2a48`, componente de rede/cache, entao
+provavelmente nao e o bloqueio da tela de loading. Nao perseguido.
+
+### Licao
+
+"A thread esta na funcao X esperando o bit Y" nao prova que Y nunca e
+satisfeito, e eu repeti esse erro tres vezes seguidas no mesmo bit. O que
+separa travado de estrangulado de normal e **contar eventos ao longo do
+tempo**; amostrar estado nao serve. O contador custou vinte linhas e matou
+uma investigacao inteira que amostragem tinha sustentado por tres builds.
