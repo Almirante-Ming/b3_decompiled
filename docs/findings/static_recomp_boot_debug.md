@@ -1176,3 +1176,58 @@ dword pelo resto da execucao, medido com `RECOMP_WATCH`.
 2. Ler o caso daquele estado e o sub-passo que devolve 0 para sempre.
 3. So entao decidir o conserto, que ate aqui nao tem nada a ver com GPU nem
    com sincronizacao: as duas ja foram inocentadas por medicao.
+
+## A cadeia completa do travamento, medida ponta a ponta (14/out)
+
+O XBE nao abre no REA, mas um PE32 minimo com as mesmas VAs abre
+(`tools` -> `xbe2pe.py` no scratchpad): mesma base 0x00010000, mesmas secoes
+que o log de boot. O REA estourou o tempo em `sub_00015FD0` (1678 bytes num
+binario de 4 MB), entao a cadeia saiu de `RECOMP_WATCH` + leitura do C.
+
+Objeto da tela de loading: **`0x004A7560`**, empilhado explicitamente pelo
+`main()` a cada iteracao. (Eu primeiro li `MEM32(0x4D6898)`, que e o argumento
+do *present* -- erro de ter filtrado o `esp += 0xC` que equilibra a pilha.)
+
+```
+0x004D5748  estado de loading        0 -> 1 -> ... -> 10, para
+   estado 10 -> loc_000162E3 -> sub_000FC9D0(0x572D30, 1)
+0x005A37B4  sub-estado               0 -> 1, para
+   sub-estado 1 -> loc_000FCA64 -> sub_001B6280(0x0057BFD8)
+0x0057C058  estado interno           0 -> 1 -> 2, para
+   estado 2 -> loc_001B634E: status = [0x0057C074]+0x17A8
+0x...+17A8  status do pipeline       1 -> 2, para   (precisa chegar a 4)
+```
+
+A tabela de salto e o byte-map saem direto do binario (`MEM8(0x16698+i)` e
+`MEM32(0x16660+idx*4)`), entao o mapeamento estado->caso e fato, nao leitura.
+
+`sub_00210DA0`, chamada quando o status nao e 4, monta um registro com os
+campos `USRPTR`, `NUMUSR`, `VOCBAN` -- usuario e voz. E `world/pipe/p2/xbox/
+xbpipe.c`.
+
+### Quem deveria avancar o status
+
+`sub_00210B60` (mesma familia `xbpipe.c`) e quem escreve `+0x17A8`, com 11
+referencias aos campos. Ela tem **zero chamadores diretos**: so e alcancavel
+pela tabela de despacho indireto, ou seja por callback.
+
+E o log mostra `KeConnectInterrupt` nos vetores 0, 1, 3, 5 e 6. A entrada da
+`NV2A_ACK` para `PGRAPH_INTR` neste repositorio diz, com todas as letras:
+*"nothing here ever raises a GPU interrupt, so 'none pending' is the truth"*.
+Se esse callback pende de uma interrupcao que nos nunca levantamos, o status
+nunca sai de 2 -- e nada acima dele pode avancar.
+
+### Contorno tentado e descartado
+
+`RECOMP_WAIT_KICK=<ms>` sinaliza um evento cuja espera ja ficou parada por
+<ms>, que e o remedio padrao para acordar perdido. **553 cutucadas em 30 s e o
+estado nao saiu de 10.** Acordar a worker nao adianta quando nao ha trabalho
+pendente: a hipotese de acordar perdido esta morta. O mecanismo fica no codigo
+porque e correto para a classe que cobre e e inerte desligado, com o resultado
+negativo escrito no comentario para ninguem repetir.
+
+### Proximo passo
+
+Confirmar se `sub_00210B60` roda alguma vez. Se nao rodar, descobrir qual
+vetor a dispara e levantar essa interrupcao -- o que e trabalho no nosso lado,
+nao no titulo.
