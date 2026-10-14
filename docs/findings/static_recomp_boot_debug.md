@@ -703,3 +703,83 @@ que o launcher já liga):
   problema é outro (algo escreve valores diferentes ali).
 - `regbase` = 0 ou fora da aperture → é o campo `device+0x934` que ninguém
   preenche, e o fix é semeá-lo, não remendar a tabela de ack.
+
+## A tela de loading: PFB flush em `sub_00351F70` (14/out)
+
+O jogo **não** estava travado no laço que eu vinha consertando. Ele terminou
+de carregar — `Global.txd`, `GlobalEn.bin`, `HeadEn.bin`, `pveh/vlist.bin`,
+`Tracks/tlist.bin`, `Data/PrgData.bin`, `Graphics/0.bum`…`16.bum`,
+`sound/generic.awd` — e entrou num estado estável desenhando a 114 fps.
+
+### Como foi localizado
+
+O watchdog imprime endereços de host, e o `[BASE]` dá o delta de ASLR. O exe
+não é stripped, então os quadros resolvem:
+
+```
+link = host - 0x7FF701F10000 + 0x140000000
+
+0x7ff703114dd0 -> 0x141204dd0  sub_00351DD0+0x1d0
+0x7ff70311525f -> 0x14120525f  sub_00351830+0x38f
+0x7ff703117ed2 -> 0x141207ed2  sub_003513F0+0xc2
+0x7ff70315e79f -> 0x14124e79f  sub_00351430+0x3df
+```
+
+Todas as 23 amostras pegaram a thread principal em `+0x1d0` ou `+0x1d6` —
+seis bytes de distância, um laço de duas instruções:
+
+```
+141204dd0:  testl $0x10000,(%rax)
+141204dd6:  jne   141204dd0
+```
+
+O C gerado de `sub_00351DD0` não tem `0x100410` em lugar nenhum: o GCC
+inlinou `sub_00351F70`, chamada em `loc_00351DE7`.
+
+```c
+void sub_00351F70(void) {
+    eax = MEM32(0x35FEE8);        // ponteiro do device
+    eax = MEM32(eax + 0x1C28);    // base de registradores cacheada
+    ecx = MEM32(eax + 0x100410) | 0x10000;
+    MEM32(eax + 0x100410) = ecx;  // chuta o flush do PFB
+loc_00351F90:
+    if (MEM32(eax + 0x100410) & 0x10000) goto loc_00351F90;
+}
+```
+
+### Por que a tabela `NV2A_ACK` não resolvia
+
+`0x100410` **já era** a primeira entrada da tabela. O problema é o endereço: a
+thread de ack limpa via nosso ponteiro de aperture, em `0xFD100410`, e o título
+não assume a base da aperture — ele usa a que cacheou em `device+0x1C28`. Se
+esse campo não foi semeado, o jogo seta o bit em `0x100410`, dentro dos 64 MB
+de RAM comum, onde nada o limpa. Spin eterno, sem falha, sem log.
+
+`device+0x1C28` não é escalar: é o endereço de uma subestrutura passada para
+`sub_00356430` dentro de `sub_00353700` (a mesma init que escreve `+0x934`), e
+quem preenche o primeiro dword está mais fundo na cadeia
+(`sub_00356590` / `sub_003565BB`). `+0x934` e `+0x1C28` são campos distintos:
+`+0x934` alimenta a espera de DMA e mediu `0xFD000000`; isso não diz nada sobre
+o outro.
+
+### Ordem dos portões dentro de `sub_00351DD0`
+
+1. `loc_00351DE7` → flush do PFB (`0x100410`, bit `0x10000`) — **este**
+2. `loc_00351E10` → `[base+0x3240] == [base+0x3244]` (PFIFO CACHE1)
+3. `loc_00351E1E` → `[base+0x400700] == 0` (PGRAPH_STATUS)
+
+Os dois últimos já estavam corrigidos (espelho do par PFIFO e PGRAPH na tabela
+de ack). São necessários em sequência, um atrás do outro — consertar o segundo
+não podia mostrar efeito nenhum enquanto o primeiro barrava.
+
+### Erro meu, para não repetir
+
+O `[GPUIDLE]` reportou `regbase+0x3240/+0x400700 unreadable` e eu li isso como
+um achado. Não era: `fence_readable()` validava só a RAM principal e a janela
+contígua, e negava a aperture de MMIO — que é mapeada e perfeitamente legível,
+em `XBOX_NV2A_BASE + g_memory_offset`. O predicado estava errado, não a
+aperture. Um diagnóstico que mente "ilegível" sobre memória legível é pior do
+que não reportar nada, porque parece resultado; custou uma rodada inteira atrás
+de uma aperture que nunca esteve errada. Corrigido na própria
+`fence_readable`, não no ponto de uso, para que nenhuma outra sonda herde a
+mesma mentira.
