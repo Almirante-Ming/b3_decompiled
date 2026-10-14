@@ -1088,3 +1088,56 @@ caminho de sucesso. Em `STATUS_END_OF_FILE` e em falha ele retorna **sem**
 sinalizar, entao qualquer chamador que espere naquele evento fica parado para
 sempre. Nao e o que trava aqui agora (o EOF de partition0 foi eliminado e o
 travamento continua), mas e um acordar perdido garantido esperando acontecer.
+
+## O livro-caixa de eventos inocenta a nossa sincronizacao (14/out)
+
+`[EVTLEDGER]` conta sets e waits por handle, somando as tres portas de espera
+(`NtWaitForSingleObjectEx`, `NtWaitForMultipleObjectsEx`, `KeWaitForSingleObject`),
+e despeja o estado quando `[WAITLONG]` dispara:
+
+```
+[WAITLONG]  tid 3516 blocked >2000 ms on handle 0x490 (INFINITE)
+[EVTLEDGER] 0x0035F7FC=0 sets/1 waits  0x490=41 sets/42 waits  0x494=41 sets/0 waits
+```
+
+**41 sets contra 42 waits.** Se a nossa implementacao tivesse engolido um
+sinal -- a hipotese do auto-reset que nao acumula -- veriamos 42 sets e 42
+waits com a consumidora parada mesmo assim. Vemos 41. A produtora **nunca
+postou o trabalho numero 42**. As nossas primitivas de evento estao
+inocentadas por contagem, e a causa esta na logica acima.
+
+`0x494 = 41 sets / 0 waits` tambem desfaz a leitura anterior: o handoff nao e
+um ping-pong simetrico. Um lado espera, o outro so sinaliza e segue.
+
+### O que e esse handoff
+
+Varrendo a pilha do guest no bridge de `NtSetEvent` (o call site registrado e
+sempre o wrapper `SetEvent` do titulo, que nomeia ninguem -- 55 lugares o
+chamam):
+
+```
+produtora  tid 15932 -> 0x490  <- 0x001B3A1F <- 0x001B378D <- 0x00011226
+consumidora tid 3516 -> 0x494  <- 0x001B401B <- 0x001B4055 <- 0x001D1C4A
+```
+
+- `sub_001B3EE0` (`game_engine`) e o laco da worker: sinaliza, trabalha,
+  espera, sinaliza. A sua entrada `sub_001B401E+0x22` = `0x001B4040` e
+  exatamente o `ctx1` do `PsCreateSystemThreadEx #2` no log.
+- `sub_001B39D0` e `sub_001B3A80` (`game_engine`) sao o lado de postar: ambos
+  sinalizam sob condicao, a forma de "acorde a worker se a fila estava vazia".
+
+E a fila de trabalhos do motor. A worker esta parada esperando o trabalho 42,
+e a thread principal -- viva, a 120 fps -- parou de postar.
+
+### Onde isso deixa a investigacao
+
+Eliminados por medicao ate aqui: PFB flush, portoes de DMA, fence, o sleep de
+10 Hz, o EOF de `partition0`, a renderizacao (a tela sai perfeita) e agora a
+semantica de eventos. O que resta e a maquina de estados de loading da thread
+principal: ela decide nao postar mais trabalho, e e preciso descobrir o que
+ela consulta para decidir isso.
+
+Correcao de um erro meu: eu disse num turno anterior que `type=1` em
+`NtCreateEvent` seria manual-reset. E auto-reset (SynchronizationEvent). A
+contagem tornou a distincao irrelevante para este travamento, mas o registro
+fica certo.
