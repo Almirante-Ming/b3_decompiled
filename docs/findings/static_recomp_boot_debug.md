@@ -1231,3 +1231,58 @@ negativo escrito no comentario para ninguem repetir.
 Confirmar se `sub_00210B60` roda alguma vez. Se nao rodar, descobrir qual
 vetor a dispara e levantar essa interrupcao -- o que e trabalho no nosso lado,
 nao no titulo.
+
+## Descendo mais: o callback roda, o relogio anda, a operacao nao completa
+
+Tres hipoteses caidas por medicao neste turno, todas plausiveis e todas
+erradas:
+
+1. **Acordar perdido na fila de trabalhos.** `RECOMP_WAIT_KICK=50`: 553
+   cutucadas em 30 s, estado nao saiu de 10.
+2. **Callback nunca invocado.** `sub_00210B60` so e alcancavel por ponteiro, e
+   o unico lugar que a registra e `sub_00210CF0` via `sub_00215CC0` numa
+   tabela em `0x0041D118`. Mas ela **roda**: foi ela que escreveu o status 2.
+3. **Relogio congelado.** A bomba de callbacks `sub_00215D60` tem um portao
+   temporal: so percorre a tabela quando `agora() >= [0x0041D1B8]`, e repoe o
+   portao em `agora() + 5`. Se o relogio parasse, a tabela nunca seria
+   percorrida -- o congelamento exato que se via. Medido: o relogio
+   (`*[0x0036BC60]`, um data export do kernel) avanca ~1000/s e o portao
+   acompanha. A bomba roda normalmente.
+
+### Onde para, de verdade
+
+Com o callback rodando a cada tick, em status 2 ele chama
+`sub_00215650(ctx, obj, 0x10)` e trata o retorno:
+
+```c
+if (r == A) { obj->17AC = 3; obj->17B0 = 8; obj->17A4 = 0; }  // erro
+if (r == B) { obj->17AC = 1; }                                // pendente
+if (r == C) { obj->17A8 = 3; }                                // avanca
+```
+
+Medido `+0x17AC == 1`: **`sub_00215650` devolve "pendente" toda vez**.
+
+Ela le um gerenciador em `MEM32(0x0041D114)` = `0x00FFEA60` e chama
+`sub_0036412F` (secao XPP), que embrulha o trabalho entre
+`KeRaiseIrqlToDpcLevel` e `KfLowerIrql` -- os ordinais 129 e 161 crescem sem
+parar no log, que e exatamente esse laco. O resultado da chamada e guardado em
+`[0x00FFEA60]+8`, que foi de `FFFFFFFF` para **0** e congelou.
+
+Nao e DPC: o ordinal 119 (`KeInsertQueueDpc`) nunca e chamado na execucao
+inteira, e nao ha nenhum `[IRQLBUG]`. O IRQL ali e so um lock em volta de uma
+fila consultada de forma sincrona.
+
+### Estado
+
+A cadeia esta completa de `main()` ate um unico valor: o resultado da chamada
+XPP em `[0x0041D114]+8`, que e 0 e deveria virar um recurso valido. O proximo
+passo e `sub_0036412F` e os dois thunks de kernel que ela chama por
+`MEM32(0x36BC54)` e `MEM32(0x36BC58)` -- descobrir quais ordinais sao e o que
+devolvem.
+
+### Ferramenta
+
+`tools/xbe/xbe2pe.py` converte o XBE num PE32 com as mesmas VAs, para
+ferramentas que nao leem XBE. O REA carrega, mas estourou 5 min decompilando
+uma funcao de 1678 bytes neste binario de 4 MB -- util para funcoes pequenas,
+nao para as grandes.
