@@ -1141,3 +1141,38 @@ Correcao de um erro meu: eu disse num turno anterior que `type=1` em
 `NtCreateEvent` seria manual-reset. E auto-reset (SynchronizationEvent). A
 contagem tornou a distincao irrelevante para este travamento, mas o registro
 fica certo.
+
+## O laco que prende: `main()` e a maquina de estados de loading
+
+`sub_00156740` (`game_engine`) e o `main()` do titulo -- a cadeia da thread
+principal resolve ate `sub_001D2B53`, que e o `ctx1` do
+`PsCreateSystemThreadEx #1`. Ele contem o laco exato:
+
+```c
+loc_001567A0:
+    sub_0002F750();                     // pump
+    sub_001D97E0(MEM32(0x4D6898));      // present -- a cadeia que o watchdog pega
+    if (LO8(sub_00015FD0()) == 0)       // "ja terminou?"
+        goto loc_001567A0;              // enquanto nao, repete
+```
+
+`sub_00015FD0` (`game_vtable`, 1678 bytes) e uma maquina de estados com jump
+table de 14 alvos, indexada por `MEM32(<obj> + 0x2E1E8) - 1`, limitada a
+0x17. Cada caso chama um sub-passo e, se ele devolver 0, salta para
+`loc_0001635C` e o estado fica onde esta.
+
+Entao: a thread principal apresenta a tela de loading a 120 fps e pergunta
+"terminou?" todo frame; a resposta e sempre nao; e a worker esta bloqueada
+esperando um trabalho que nunca e postado. As duas pontas esperam.
+
+O objeto de loading (`0x003F9410`, o `ctx2` da worker) nao muda um unico
+dword pelo resto da execucao, medido com `RECOMP_WATCH`.
+
+### O que falta, em ordem
+
+1. Identificar com certeza o objeto que `sub_00015FD0` recebe -- `0x4D6898`
+   e o que `main()` passa para o present, nao necessariamente o mesmo -- e ler
+   `+0x2E1E8` para saber **em qual estado** parou.
+2. Ler o caso daquele estado e o sub-passo que devolve 0 para sempre.
+3. So entao decidir o conserto, que ate aqui nao tem nada a ver com GPU nem
+   com sincronizacao: as duas ja foram inocentadas por medicao.
