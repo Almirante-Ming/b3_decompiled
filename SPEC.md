@@ -249,3 +249,24 @@ burnout3_decompiled/
 - A thunk table de kernel é fixa: qualquer chamada mapeada errado quebra o
   jogo silenciosamente ou crasha. A Fase 2 precisa de testes sólidos antes de
   avançar a Fase 3 em paralelo.
+
+## 9. Addendum — pivô pra recompilação estática (xboxrecomp)
+
+As fases acima descrevem o plano original de decompilação manual. Esse
+plano foi pausado em favor de usar o **`sp00nznet/xboxrecomp`** (toolkit de
+recompilação estática já maduro, com um fork dedicado ao Burnout3) — ver
+decisão e detalhes na conversa, não repetidos aqui pra não duplicar.
+
+Resumo do estado prático:
+- Pipeline completo (`xbe_parser → disasm → func_id → abi_analysis →
+  recomp`) rodado com sucesso contra nosso `default.xbe`: 24.494 funções,
+  cross-compilado pra Windows via MinGW a partir do Linux.
+- Debugging de boot em andamento — ver
+  [`docs/findings/static_recomp_boot_debug.md`](findings/static_recomp_boot_debug.md)
+  pro estado exato (fixes já aplicados, trava atual identificada em
+  `sub_00351B10`, ferramentas de diagnóstico reaproveitáveis).
+- Repositórios de terceiros (`vendor/xboxrecomp`, `vendor/burnout3`)
+  clonados mas não versionados (ver `.gitignore`) — fonte de verdade é o
+  upstream do GitHub, nosso repo só guarda os fixes/configuração locais
+  (`config/seed_functions.json`, patches em `main.c`) via o findings doc
+  acima até decidirmos se vale manter um fork próprio.
