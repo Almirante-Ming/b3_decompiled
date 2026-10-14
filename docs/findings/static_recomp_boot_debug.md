@@ -783,3 +783,58 @@ que não reportar nada, porque parece resultado; custou uma rodada inteira atrá
 de uma aperture que nunca esteve errada. Corrigido na própria
 `fence_readable`, não no ponto de uso, para que nenhuma outra sonda herde a
 mesma mentira.
+
+## Correcao: o campo `+0x1C28` estava semeado (14/out, depois)
+
+Medido, e refuta a secao anterior:
+
+```
+[GPUIDLE] dev=0x0035DA40 regbase=0xFD000000 pfbbase=0xFD000000
+          flush=0x00010000 BUSY  put==get  pgraph=0x00000000
+```
+
+`device+0x1C28` contem `0xFD000000`. O endereco do flush sempre esteve
+correto, nenhum aviso `[PFB]` foi impresso, e os tres portoes de DMA estao
+abertos. A hipotese do "campo nunca preenchido" estava errada.
+
+O que o log mostra, relido: nos **limpamos** o bit naquele endereco, na mesma
+thread que mais adiante o le como `BUSY`. Isso nao e deadlock -- e o titulo
+setando o bit outra vez. A thread de ack limpava o bit uma vez por iteracao,
+e a iteracao carregava o scan do pushbuffer e o executor que rasteriza o
+frame: ~9 ms a 110 fps. O titulo ficou **serializado na nossa latencia de
+servico**.
+
+Na pratica isso significa que havia dois problemas sendo tratados como um:
+
+1. **Acoplamento de latencia.** Nada em `NV2A_ACK`/`NV2A_IDLE` depende do
+   pushbuffer, do executor ou do frame, e enquanto moravam na mesma thread a
+   resposta chegava uma vez por frame. Hardware limpa esses bits em
+   microssegundos, nunca na cadencia de um frame, entao o acoplamento era o
+   defeito. Agora tem thread propria, com `Sleep(0)`: o esperador ja esta
+   queimando um core num laco de duas instrucoes em outro core, e ceder basta
+   para a latencia cair de um frame para um quantum.
+
+2. **O bloqueio real, ainda em aberto.** Com os arquivos todos carregados e os
+   portoes de DMA abertos, resta descobrir o que o titulo espera. Pista nova:
+   o ordinal 99 e `KeDelayExecutionThread` e cresce a ~10/s em regime estavel
+   -- a thread principal dorme dez vezes por segundo, o padrao de um laco
+   "espera e tenta de novo" consultando uma condicao a 10 Hz.
+
+### O contador que separa os dois
+
+`clears=` na linha `[GPUIDLE]` conta quantas vezes limpamos o bit do flush.
+"O bit esta setado" num instante de amostragem nao diz se o titulo esta preso
+num unico flush ou completando milhares deles, e os dois pedem correcoes
+opostas:
+
+- `clears=1` (ou punhado) -> nossa escrita nao alcanca a memoria que o titulo
+  le, e o problema e de endereco/mapeamento.
+- `clears` nos milhares -> alcanca, e o que parecia travamento era o titulo
+  correndo na velocidade em que o atendiamos.
+
+### Licao
+
+Eu diagnostiquei "esta na funcao X esperando o bit Y" e tratei como prova de
+que Y nunca era satisfeito. A posicao da thread diz onde ela espera, nao se a
+espera termina. Para distinguir e preciso contar eventos ao longo do tempo,
+nao amostrar estado.
