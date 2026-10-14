@@ -944,3 +944,87 @@ satisfeito, e eu repeti esse erro tres vezes seguidas no mesmo bit. O que
 separa travado de estrangulado de normal e **contar eventos ao longo do
 tempo**; amostrar estado nao serve. O contador custou vinte linhas e matou
 uma investigacao inteira que amostragem tinha sustentado por tres builds.
+
+## Loop fechado: build, instalacao e execucao locais (14/out)
+
+O jogo esta exposto em `/mnt/a/burnout3` (`A:\burnout3` no Windows) e a
+interop do WSL funciona, entao da para compilar, instalar e executar sem
+depender de troca de logs:
+
+```sh
+cp .../bin/burnout3.exe /mnt/a/burnout3/bin/
+timeout -k 5 30 /mnt/c/Windows/System32/cmd.exe /c \
+  "cd /d A:\\burnout3 && set RECOMP_PB_EXEC=1&& bin\\burnout3.exe" > run.log 2>&1
+/mnt/c/Windows/System32/taskkill.exe /IM burnout3.exe /F
+```
+
+O `timeout` mata o `cmd.exe` mas nao o neto, dai o `taskkill` explicito.
+
+## O sleep de 10 Hz e o worker de cache de disco (nao e o bloqueio)
+
+`[SLEEP]` achou exatamente um call site. A cadeia levou cinco tentativas,
+e as quatro primeiras falharam de formas que valem registro:
+
+1. `BRIDGE_MEM32(g_esp)` dentro de um bridge da o **argumento zero**, nao o
+   endereco de retorno: o dispatcher ja fez o pop. Imprimiu `wait_mode` (1)
+   como call site, que parece endereco corrompido e nao endereco errado. O
+   dispatcher ja guarda o valor certo em `g_xbox_kernel_caller`.
+2. A cadeia de `ebp` termina depois de um salto: os wrappers de sleep acima
+   de `0x001D1976` sao FPO leaves e nunca empilham `ebp`.
+3. `CaptureStackBackTrace` devolve zero frames -- as funcoes recompiladas nao
+   tem unwind info utilizavel.
+4. `StackWalk64` com `RtlCaptureContext` tambem devolve zero.
+5. Varredura conservadora da pilha do guest, filtrando o que cai em `.text`.
+   Funcionou -- depois de corrigir o limite, que eu havia fixado na pilha da
+   thread principal (`0x780000..0xF80000`) enquanto quem dorme e um worker com
+   pilha no heap. O laco saia na primeira iteracao e imprimia nada, o que
+   parece cadeia vazia e nao limite errado.
+
+Resultado:
+
+```
+[SLEEP] tid 11360, KeDelayExecutionThread from 0x001D19A7, 50.000 ms
+        <- 0x001D19E5 <- 0x0021CBFF <- 0x001D1C4A <- 0x00244B88 <- 0x0021CBE0
+```
+
+`sub_0021CBE0` (a funcao vizinha declara `Source: driver/xbox/xbcache.c`):
+
+```c
+MEM32(0x3C61E4) = 1;                  // "estou rodando"
+if (MEM32(0x41D384) == 0) goto fim;
+laco: sub_0021CB00(); Sleep(0x32);    // 50 ms
+      if (MEM32(0x41D384) != 0) goto laco;
+fim:  MEM32(0x3C61E4) = 0;
+```
+
+E o worker de cache de disco, fazendo o trabalho dele. Os dois flags
+(`0x41D384`, `0x3C61E4`) aparecem apenas em `recomp_0006.c`, o modulo de
+cache -- e handshake interno de start/stop, nao portao da tela de loading. O
+sinal de 10 Hz esta explicado e **eliminado como suspeito**.
+
+## Defeito real corrigido: `Partition0.img` truncado
+
+`saves/Partition0.img` tinha **4608 bytes = 9 setores** exatos. O jogo le o
+setor 9 (offset 4608) e recebia `STATUS_END_OF_FILE`. Numa particao raw uma
+leitura dentro do dispositivo nunca devolve EOF.
+
+Estendido com zeros para 1 MB (backup em `Partition0.img.bak-4608`).
+Resultado medido: **zero EOFs na execucao inteira**, e `@4608` passa a
+devolver 512 bytes. Nao destravou a tela de loading -- nenhum arquivo novo
+foi aberto, mesma geometria -- mas era defeito de verdade e saiu da mesa.
+
+O conserto proprio e no codigo, nao no arquivo: `xbox_NtReadFile` devolve
+`STATUS_END_OF_FILE` quando a leitura cai inteira apos o fim, o que esta
+certo para um arquivo e errado para uma imagem de particao. Distinguir os
+dois exige marcar os handles de imagem em `NtCreateFile` e limpar em
+`NtClose`. Nao feito: ~40 linhas na camada de arquivos com questao de
+lifetime, para um defeito que nao e o bloqueio, e mudanca apressada nessa
+camada e exatamente o que causou a regressao do acking.
+
+## Onde o bloqueio nao esta
+
+Eliminados por medicao, nao por argumento: PFB flush, portoes de DMA
+(`put == get`, `pgraph == 0`), fence, o sleep de 10 Hz, e o EOF de
+`partition0`. O jogo roda um laco estavel a ~120 fps, le todos os arquivos
+que pede, e a thread principal passa cada frame no caminho de present do D3D.
+Nada disso e o problema.
