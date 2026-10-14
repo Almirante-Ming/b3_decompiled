@@ -838,3 +838,56 @@ Eu diagnostiquei "esta na funcao X esperando o bit Y" e tratei como prova de
 que Y nunca era satisfeito. A posicao da thread diz onde ela espera, nao se a
 espera termina. Para distinguir e preciso contar eventos ao longo do tempo,
 nao amostrar estado.
+
+## Regressao: o acking so era seguro porque era lento (14/out)
+
+Tirar os bits de ocupado da thread de ack e dar a eles uma thread propria
+**quebrou o titulo inteiro**. Medido:
+
+```
+clears=0   flush=0x00000000 clear      <- o bit nunca nem foi setado
+indirect calls 41590 (+0)              <- congelado de verdade, nao devagar
+[GPU] 0.00 fps (8 flips), 21 draws
+*fence=0x0000002B put=0x0000002B       <- congelado
+```
+
+Travou **antes** do flush, com um unico arquivo lido (`Global.txd`), e numa
+funcao diferente: `sub_00351AA0+0xb7`, nao `sub_00351DD0+0x1d0`.
+
+### Mecanismo
+
+`NV2A_ACK` zera `PGRAPH_STATUS` sob mascara `0xFFFFFFFF` e `NV2A_IDLE` forca
+bits. Na cadencia de um frame, o titulo confiavelmente le de volta o que
+escreveu antes de sobrescrevermos. Na cadencia de uma thread com `Sleep(0)`,
+nao le. **A janela de valor obsoleto era de onde o titulo lia as proprias
+escritas** -- o acking era seguro por ser lento, e acelerar transformou isso
+num clobber imediato.
+
+Revertido. O unico residuo da tentativa e o contador `clears=`, e o diff
+contra o estado bom confirma que nenhuma mudanca de comportamento sobreviveu.
+
+### `sub_00351AA0`, para referencia
+
+```c
+loc_00351AB0:
+    eax = MEM32(edx + 0x400B10);   // edx = device+0x934 = 0xFD000000
+    ecx = MEM32(edi) << 2;         // edi = device+0x30 = ponteiro do fence
+    ecx = ecx ^ eax;
+    if (ecx & 0x7C) goto loc_00351AB0;
+```
+
+`0x400B10` nao esta em nenhuma das tabelas, entao le zero da aperture e o XOR
+e identidade. A condicao de saida vira `(fence << 2) & 0x7C == 0`, ou seja
+`fence & 0x1F == 0`: o fence tem de cair num multiplo de 32. No log ele esta
+congelado em `0x2B` (`& 0x1F = 0x0B`), insatisfazivel -- mas congelou porque o
+titulo parou de submeter, nao o contrario. O travamento aqui e consequencia;
+a causa esta acima. Com o fence em movimento (ele avanca de 4 em 4) a condicao
+e satisfeita periodicamente, e nas execucoes boas era.
+
+### Licao
+
+A correcao certa para a latencia nao e reconhecer o bit mais rapido, e **a
+escrita nunca depositar o bit** -- do jeito que os bits de reset do AC97 ja
+sao tratados neste arquivo, com a pagina em PAGE_READONLY e o handler
+mascarando. O comentario do AC97 ja dizia que a abordagem da tabela e
+inadequada para isso; eu nao o tinha lido como aviso.
