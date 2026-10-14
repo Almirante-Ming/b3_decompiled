@@ -1340,3 +1340,79 @@ acordar perdido na fila de trabalhos (553 cutucadas, nada), callback nunca
 invocado (ele roda), relogio congelado (anda, ~1000/s), DPC nao drenado
 (ordinal 119 nunca e chamado). Cada queda custou minutos porque o ciclo de
 build/instalar/rodar/ler e local.
+
+## O que o xrevive/Xrecomp ensina, e a causa raiz que ele aponta (14/out)
+
+O usuario baixou o instalador do xrevive. Ele e NSIS: o payload e um stream
+LZMA solido logo apos o `firstheader` (props `5d 00 00 80 00`, lc=3 lp=0 pb=2,
+dicionario de 8 MB), 17 MB descomprimidos, de onde se extrai um app
+Rust/Tauri de 16,9 MB.
+
+Os repositorios nao ajudam -- **Xrecomp esta vazio** e o do xrevive tem so o
+README --, mas o binario do launcher diz muita coisa.
+
+### Convencao de linha de comando dos jogos
+
+```
+--xbe   --game-dir   --save-name
+```
+
+Eles parametrizam o que nos cravamos em `main.c` (`BO3_XBE_DEFAULT`,
+`BO3_GAME_DIR`, `BO3_SAVE_DIR`). Ganho barato de usabilidade, sobretudo porque
+testamos em outra maquina.
+
+### A pista que importa: identidade de console
+
+O launcher tem uma struct `ConsoleIdentity` de tres campos, com exemplo
+embutido:
+
+```json
+{ "serial": "104920312005", "mac": "00:50:F2:1A:2B:3C", "hddKeyHint": "..." }
+```
+
+E a mensagem de erro dele e explicita:
+
+> "No readable XB Online console identity yet. Launch an XBL-enabled game once
+> to create it."
+
+Ou seja: **o runtime recompilado deles gera uma identidade de console** --
+serial, MAC e chave de HD, que num Xbox real vivem na EEPROM. A autenticacao
+sai por `https://auth.insigniastats.live/api/`, entao o xb.live se apoia na
+infraestrutura do Insignia.
+
+### Ligando com o nosso travamento
+
+Com `XBOX_LOG_LEVEL=5` (e numero, nao nome; a saida vai para
+`xbox_kernel.log`, nao para stderr), o Burnout 3 pede estes indices de EEPROM:
+
+```
+tratados:      0x07 0x08 0x09 0x0A 0x11
+NAO tratados:  0x101 (x1)  0x103 (x2)  0x104 (x2)  0xFFFF (x1)
+```
+
+O nosso `kernel.h` define ate `XC_MAX_OS = 0xFF`. **A faixa 0x100+ -- o bloco
+de fabrica, onde moram numero de serie, endereco MAC e chave online -- nao
+existe no nosso kernel**, e `0xFFFF` e a leitura da EEPROM inteira.
+
+Isso e exatamente a mesma informacao que compoe o `ConsoleIdentity` deles. E
+da uma explicacao de causa raiz para o travamento que eu contornei hoje por
+timeout: a etapa de loading esperava um item que so o produtor em XONLINE
+cria, e esse produtor nao consegue formar uma identidade de console porque
+pedimos "unhandled" para serial, chave online e regiao -- e para a EEPROM
+toda.
+
+**Hipotese, nao fato comprovado**: responder coerentemente esses indices pode
+fazer o XOnline concluir a inicializacao sozinho, tornando o gancho de timeout
+desnecessario. O que e fato: o titulo pede, nos nao respondemos, e esses sao
+os mesmos campos que o projeto concorrente precisa gerar.
+
+### Plano
+
+1. Implementar o bloco de fabrica em `ExQueryNonVolatileSetting` (serial, MAC,
+   chave online, regiao AV, regiao de jogo) e `0xFFFF`, com valores sinteticos
+   mas bem formados. Verificar a numeracao exata contra xemu/Cxbx antes, que o
+   nosso header nao a define.
+2. Rodar e ver se o pipeline sai do status 2 **sem** o gancho
+   (`RECOMP_SKIP_LIVE_WAIT=0`). Se sair, a causa raiz esta resolvida e o
+   contorno vira rede de seguranca.
+3. Aceitar `--xbe/--game-dir/--save-name`.
