@@ -1,3 +1,4 @@
 *.iso
 node_modules
 vendor/
+__pycache__/

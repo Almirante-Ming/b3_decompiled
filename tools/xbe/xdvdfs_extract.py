@@ -37,31 +37,48 @@ def find_volume_lba0(f):
 
 
 def read_dir(f, vol_lba0, start_sector, size):
+    """Entries of one directory, by walking its tree.
+
+    An XDVDFS directory is a binary tree, not a list: each entry carries the
+    offsets of its left and right subtrees (in 4-byte units, from the start of
+    the directory data, 0 meaning no child). Entries do not cross a sector
+    boundary, so the tail of a sector is padded -- which is exactly why a
+    linear walk cannot work. Reading these in address order and stopping at
+    the first padding byte silently truncated every directory whose entries
+    span more than one sector: `tracks` came out with 76 of its entries and
+    without tlist.bin, and the title, finding its track list missing,
+    reported the disc as dirty.
+    """
     f.seek(vol_lba0 + start_sector * SECTOR)
     data = f.read(size)
     entries = []
-    off = 0
-    while off < len(data):
-        if off + 14 > len(data):
-            break
+    # Explicit stack over subtree offsets, plus a visited set: a corrupt or
+    # misread image can point a subtree at itself, and recursion on a tree
+    # read out of untrusted bytes should not be able to hang the extractor.
+    stack, seen = [0], set()
+    while stack:
+        off = stack.pop()
+        if off in seen or off + 14 > len(data):
+            continue
+        seen.add(off)
         left, right, start, fsize, attr, namelen = struct.unpack_from("<HHIIBB", data, off)
+        # 0xFFFF subtree offsets and an all-ones entry are both end markers.
         if left == 0xFFFF and right == 0xFFFF and start == 0xFFFFFFFF:
-            break
+            continue
         if namelen == 0 or namelen == 0xFF:
-            break
+            continue
         raw_name = data[off + 14:off + 14 + namelen]
-        # Directory sectors aren't always fully zero-padded past the last
-        # real entry; walking into that tail reads garbage as a bogus next
-        # entry. A real XDVDFS name is plain ASCII, so anything outside
-        # printable range means we've run off the end -- stop here rather
-        # than crash trying to use it as a filename.
+        # A real name is plain ASCII. Anything else means this offset is not
+        # an entry -- abandon the branch, but keep walking the others, which
+        # is the difference between losing one subtree and losing the rest of
+        # the directory.
         if len(raw_name) < namelen or any(b < 0x20 or b > 0x7E for b in raw_name):
-            break
-        name = raw_name.decode("ascii")
-        entries.append((name, start, fsize, attr))
-        entry_len = 14 + namelen
-        pad = (4 - (entry_len % 4)) % 4
-        off += entry_len + pad
+            continue
+        entries.append((raw_name.decode("ascii"), start, fsize, attr))
+        if left and left != 0xFFFF:
+            stack.append(left * 4)
+        if right and right != 0xFFFF:
+            stack.append(right * 4)
     return entries
 
 
@@ -78,6 +95,14 @@ def extract(f, vol_lba0, start_sector, size, dest_dir, rel_path, only_prefix, st
             extract(f, vol_lba0, start, fsize, dest_dir, entry_rel, only_prefix, stats)
         else:
             os.makedirs(os.path.dirname(out_path), exist_ok=True)
+            # Already there at exactly the recorded length: leave it. Makes a
+            # re-run after fixing the directory walk cost only the files that
+            # were actually missing, instead of rewriting the other ~1.9 GB --
+            # and re-running is the normal way this tool gets used, because a
+            # parsing bug is only ever found after an extraction.
+            if os.path.exists(out_path) and os.path.getsize(out_path) == fsize:
+                stats["skipped"] = stats.get("skipped", 0) + 1
+                continue
             f.seek(vol_lba0 + start * SECTOR)
             remaining = fsize
             with open(out_path, "wb") as out:

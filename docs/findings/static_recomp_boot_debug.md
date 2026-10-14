@@ -336,7 +336,213 @@ imprime o cabeçalho antes de qualquer loop, logo a ausência total prova que
 `getenv("RECOMP_VSH_DUMP")` era NULL, não que o programa estava vazio.
 **Ao entregar binário + launcher, dizer explicitamente que os dois mudaram.**
 
-### Status da hipótese do default de `oPos.w` (em aberto)
+## O microcódigo, finalmente: `oPos.w = c[191].w`
+
+Com o build stamp confirmando o binário (`[VSH] interpreter built Oct 14
+2026 14:37:45, oPos.w default 1.0`) e o `w` ainda saindo 0, o default está
+descartado **com prova**. O `RECOMP_VSH_DUMP` deu o programa inteiro — são
+só 6 instruções:
+
+```
+0 add  A=v0.xyzz  C=c[191].xyzz      outo0 mE   -> oPos.xyz = v0 + c[191]
+1 mov  A=c[191].xyzw                 outo0 m1   -> oPos.w   = c[191].w
+2 mul  A=R12.zzzz B=c[58].zzzz       outo0 m2   -> oPos.z   = oPos.z * c[58].z
+3 mad  A=R12.zzzz B=R1.xxxx C=c[59]  outo0 m2   -> oPos.z   = ...
+4 mov  A=v1                          outo9 mF  -> texcoord0 = v1
+5 mov  A=v2                          outo3 mF  -> cor       = v2   FINAL
+```
+
+Leitura das máscaras: `mE`=xyz, `m1`=w, `m2`=z, `mF`=xyzw (a convenção
+oposta, bit0=x, daria "escreve yzw e depois x", que não faz sentido para um
+shader de posição — esta é autoconsistente).
+
+**A instrução 1 é a causa: `oPos.w = c[191].w`.**
+
+E `R12` é alias de `oPos` no NV2A (confirmado em `nv2a_pb_exec.c:372`:
+`tdst == 12 ? opos.v`), o que explica `z = 0`: as instruções 2 e 3
+multiplicam `R12.z`, que já vinha 0 da instrução 0.
+
+### Onde `c[191]` é carregada
+
+- `nv2a_pb_exec.c:3220/3224` carregam **só** c[59] e c[58], dos métodos
+  `0x0A20`/`0x0AF0` (viewport offset/scale).
+- O caminho geral existe: `0x1EA4` (`_CONSTANT_LOAD`, define o índice) +
+  `0x0B80..0x0C00` (`TRANSFORM_CONSTANT`, streaming), servidos por
+  `nv2a_vsh_set_constant_load()` e `nv2a_vsh_constant_word()`
+  (`nv2a_vsh_interp.c:69-83`). O streaming parece correto: grava 4 words e
+  avança o índice.
+- Um programa também pode escrever constante (`nv2a_vsh_interp.c:410`,
+  `write_masked(s_const[oaddr], ...)`).
+
+### Cuidado: o valor de `c[191]` estava sendo *inferido*, não lido
+
+Da instrução 0 dá para deduzir `c[191] = (0, 16, 0, ?)` — `167.947 =
+151.947 + 16`, e o 16 casa com o `+0+16` do surface clip. Mas isso é
+aritmética reversa, não medição, e a lista de constantes do `VTRACE`
+(`58, 59, 96, 97, 112-115`) **não incluía 191**.
+
+Adicionada (190 e 191). O próximo log separa dois culpados bem diferentes:
+
+| `c[191]` lido | conclusão |
+|---|---|
+| `(0, 16, 0, 0)` | o upload realmente não traz o `w` → bug no caminho de constantes / outra rota do driver |
+| `(0, 16, 0, 1)` | o upload está certo e o **interpretador lê errado** (swizzle ou índice em `read_src`, `nv2a_vsh_interp.c:211`) |
+
+### Medido
+
+```
+[VTRACE]   c[190] 0.003125 -0.00446429 0 0
+[VTRACE]   c[191] 0 16 0 0
+```
+
+Primeira linha: `(0, 16, 0, **0**)` confirmado por leitura. O `w` é zero no
+banco de constantes.
+
+`c[190]` dá o contexto que faltava: `0.003125 = 1/320` e
+`-0.00446429 = -1/224`, o **inverso** do viewport scale (`c[58] = 320,
+-224`). Então 190/191 são o par de espaço de tela que o runtime D3D monta —
+190 escala inversa, 191 offset.
+
+**Bônus: a convenção de máscara agora está provada, não suposta.** Com
+`c[191]` conhecido, a leitura alternativa (bit0=x) daria
+`oPos.x = c[191].x = 0`, e o observado é `268.091`. Só `mE`=xyz / `m1`=w
+fecha com os dados.
+
+### Por que não hackear `c[191].w = 1` direto
+
+Seria uma linha e provavelmente faria a imagem aparecer. Mas se o título
+**escreve** esse `w` e nós estamos perdendo a escrita, o mesmo bug está
+corrompendo outras constantes em silêncio — e o hack esconderia isso.
+
+Verificado antes de instrumentar: `nv2a_vsh_set_constant()`
+(`nv2a_vsh_interp.c:85`) **não tem nenhum chamador**, então a rota de
+streaming (`0x1EA4` + `0x0B80..0x0C00`) é a única entrada possível.
+
+Instrumentação adicionada em `nv2a_vsh_set_constant_load()` e
+`nv2a_vsh_constant_word()`, sob o mesmo `RECOMP_VSH_DUMP`, com teto de
+prints (constantes são recarregadas por batch):
+
+```
+[VSHC] load index <n>
+[VSHC] c[<n>].<comp> = <float> (raw <hex>)
+```
+
+### Resultado: o título escreve `w = 0` de propósito
+
+```
+[VSHC] load index 190
+[VSHC] c[190].x = 0.003125 (raw 3B4CCCCD)
+[VSHC] c[190].y = -0.00446429 (raw BB924925)
+[VSHC] c[190].z = 0 (raw 00000000)
+[VSHC] c[190].w = 0 (raw 00000000)
+[VSHC] c[191].x = 0 (raw 00000000)
+[VSHC] c[191].y = 16 (raw 41800000)
+[VSHC] c[191].z = 0 (raw 00000000)
+[VSHC] c[191].w = 0 (raw 00000000)
+```
+
+Oito words a partir do índice 190 — quatro para cada constante, **nenhum
+perdido**. Não havia bug de upload: o banco está fiel e o valor é zero
+porque o título manda zero.
+
+Logo o Xbox real renderiza isso com `w = 0`, e o errado é a **nossa
+interpretação**.
+
+### Causa raiz: `w = 0` é "sem projeção", não "atrás do olho"
+
+O zero é estrutural, não acidente: a instrução 1 computa
+`R1.x = RCC(c[191].w)` exatamente para o caso geral em que esse `w` é real.
+Aqui, com `w = 0` e `v0.z = 0`, o resultado colapsa em `z = 0` por desenho.
+
+Duas evidências independentes fecham o quadro:
+
+- `SET_CLIP_MIN`/`SET_CLIP_MAX` (`0x0394`/`0x0398` = `0` e `16777215`) são o
+  recorte de **z** em unidades de profundidade. Não há teste de plano
+  próximo em `w` no hardware para modo programa.
+- O comentário do próprio `raster_xf_clipped` registra que no 3D **o
+  programa** divide por `w` e deixa `oPos.w` intacto (é por isso que o
+  runtime desfaz a projeção para recortar). Ou seja: o hardware não divide;
+  quem projeta é o shader.
+
+Então no 3D `w <= 0` é de fato "atrás do olho". Neste shader 2D, `w = 0` é
+"**nunca projetado**" — e o teste de plano próximo lia uma coisa como a
+outra, descartando todo triângulo de todo batch 2D. Era a tela preta.
+
+**Fix** (`raster_xf_clipped`, `nv2a_pb_exec.c`): `w` exatamente zero nos
+**três** vértices → rasteriza com `w = 1` (interpolação afim, sem divisão) e
+não recorta. Discriminador seguro: vértice 3D cair exatamente no plano do
+olho é medida-zero, e se vier misturado com `w > 0` o recorte normal
+continua rodando.
+
+Contado em separado e reportado no resumo
+(`%u unprojected (w=0, drawn affine)`) para a heurística nunca engolir em
+silêncio um batch que deveria ter sido recortado.
+
+## Imagem na tela — e o "disco sujo" era diagnóstico correto do jogo
+
+Com o fix, a UI 2D renderiza. O jogo então exibe mensagem de disco
+danificado, e o log já apontava o motivo antes da tela aparecer:
+
+```
+[PATH] \Device\CdRom0\Tracks\tlist.bin
+[FILE] -> 0xC0000034 FAILED (win32 err=2 ERROR_FILE_NOT_FOUND)
+```
+
+`err=2` (arquivo) e não `err=3` (caminho): o diretório resolveu, o arquivo
+faltou. O jogo pede a lista de pistas, não acha, e conclui — corretamente —
+que a mídia está incompleta. **O erro era nosso, não dele.**
+
+### Bug no nosso extrator: diretório XDVDFS é árvore, não lista
+
+Um diretório XDVDFS é uma **árvore binária**: cada entrada carrega os
+offsets das subárvores esquerda e direita (em unidades de 4 bytes, a partir
+do início dos dados do diretório; 0 = sem filho). Entradas não cruzam
+fronteira de setor, então a cauda de cada setor é preenchida com padding —
+e é exatamente por isso que varredura linear não funciona.
+
+O `read_dir()` em `tools/xbe/xdvdfs_extract.py` varria linearmente e
+**parava** (`break`) no primeiro byte de padding — o mesmo `break` que eu
+havia introduzido para resolver o crash de "embedded null byte". A correção
+de um sintoma mascarou a causa: ignorar `left`/`right` truncava todo
+diretório cujas entradas passassem de um setor.
+
+Confirmado no ISO antes de mexer: a entrada existe e é única —
+`left=0 right=545 sector=1683860 size=4096 attr=0x80`. Os 4096 bytes batem
+com o `want=4096` do log.
+
+**Fix**: travessia da árvore com pilha explícita e conjunto `seen` (imagem
+corrompida pode apontar subárvore para si mesma, e recursão sobre bytes não
+confiáveis não deve travar a ferramenta). Nome inválido agora **abandona o
+ramo** em vez de parar tudo — a diferença entre perder uma subárvore e
+perder o resto do diretório.
+
+Medido antes/depois no disco inteiro: 56 diretórios, **793 → 816 entradas**,
+um único diretório truncado (`tracks`: 76 → 99). Mas uma das 23 entradas
+perdidas era o subdiretório **`US`**, com as pistas de crash junction
+(C1_V1, C1_V2, C2_V2, C3_V1, C3_V2) — em cascata, **121 arquivos e 780 MB**.
+Também faltavam `_EATrax0/1.xwb` (86 MB cada), `_FEMain.xmv`, `_femain.rws`
+e os bancos de voz do DJ.
+
+**Extração agora idempotente**: arquivo existente com o tamanho exato é
+pulado. Re-rodar após corrigir um bug de parsing custa só o que faltava, e
+re-rodar é o uso normal da ferramenta — bug de parsing só é descoberto
+*depois* de uma extração.
+
+**Verificação final**: 761 arquivos, 2.841.931.784 bytes, **zero
+divergências** de presença ou tamanho. Antes faltavam ~840 MB.
+
+### O que o trace de upload distinguiria (mantido para referência)
+
+- **nenhum `[VSHC] c[191].w`** → a escrita acontece fora da nossa
+  visibilidade (ex.: no init do D3D, antes do executor seguir o
+  pushbuffer). Aí o certo é semear o valor na inicialização, não remendar.
+- **`c[191].w = 0` explícito** → o título mesmo manda zero, e a semântica
+  de `w` no NV2A para batch de espaço de tela é que precisa ser
+  reinterpretada.
+- **`c[191].w = 1` escrito e lido como 0** → bug real de escrita/leitura no
+  banco, e o impacto é bem maior que esta tela.
+
+### Status da hipótese do default de `oPos.w` (fechada: não era)
 
 Testado: com `opos.v[3] = 1.0f`, **continua 100% descartado** (2.262.208
 triângulos atrás do olho, 0 desenhados, `x 0..0 y 0..0`).
@@ -418,3 +624,82 @@ Esse fix deve destravar o `sub_00351B10`, mas pode expor outro endereço
 original já avisava "Same layout as HL2" pra pelo menos duas constantes
 —vale `grep -rn "0x35F\|0x360\|calibrat" src/` no `main.c` se aparecer
 outra trava parecida, antes de sair caçando do zero de novo).
+
+## Tela de loading: não é travamento, é espera ocupada no "GPU idle"
+
+Com o fix do `w`, **pixels são escritos**: `20740908 pixels`, `95160
+triangles rasterised`, `0 dropped behind the eye`, `123184 unprojected`,
+`brightest pixel 0xFF9EC4F7`. A UI 2D renderiza.
+
+`[RAST] 4 raster threads (8 cores, default cores-4)` — threading está
+ligado, não é o gargalo. E os `indirect calls` crescem firme (+2300~2500
+por 3s), draws e fence avançam: **não está travado**, está girando.
+
+### Onde, por símbolo (não por chute)
+
+Ordinais que crescem: **129 `KeRaiseIrqlToDpcLevel`**, **161 `KfLowerIrql`**,
+**294 `RtlLeaveCriticalSection`** — polling sob IRQL elevado.
+`151 KeStallExecutionProcessor` congelou em 506.
+
+Pilhas resolvidas com `nm` + delta de ASLR (base `0x7FF7617B0000`):
+
+```
+tid 15268 (jogo, 17s cpu)   sub_001D1BD8 -> sub_001D2B53 -> sub_00156740
+                            -> sub_001D97E0 -> sub_001DEBA0 -> sub_001DDEB0
+                            -> sub_00351430 -> sub_003513F0
+                            -> sub_00351830 -> sub_00351DD0
+tid 18652 (100% de 1 core)  nv2a_ack_thread -> nv2a_pb_scan -> pb_walk
+                            -> nv2a_pb_exec_method -> draw_primitive
+                            -> raster_xf_clipped -> raster_xf_triangle
+                            -> xf_rows -> nv2a_rc_eval -> read_rgb
+```
+
+`sub_00351430 -> sub_003513F0` são **as mesmas** funções da trava original do
+fence — mesma região do D3D8LTCG, folha diferente (`sub_00351DD0` em vez de
+`sub_00351B10`).
+
+### O loop, lido no C recompilado
+
+`src/game/recomp/gen/recomp_0024.c:4850`:
+
+```c
+ecx = MEM32(0x35FEE8);        // ponteiro do device D3D
+eax = MEM32(ecx + 0x934);     // base do bloco de registradores NV2A
+loc_00351E10:
+    if (MEM32(eax + 0x3240) != MEM32(eax + 0x3244)) goto loc_00351E10;
+    if (MEM32(eax + 0x400700) != 0)                 goto loc_00351E10;
+MEM32(edx + 8) |= 0x2000;     // marca idle
+```
+
+`0x3240`/`0x3244` = `PFIFO_CACHE1_DMA_PUT`/`DMA_GET`; `0x400700` =
+`PGRAPH_STATUS`. É "espera a GPU ficar ociosa".
+
+### Por que isso pode nunca sair
+
+Nós espelhamos `NV2A_USER_DMA_PUT/GET` em **`0x800040`/`0x800044`**
+(`xbox_memory_layout.c:241`). `0x3240`/`0x3244` aparecem **só num
+comentário**, e `0x400700` **não existe no código**.
+
+Com a aperture zerada os três leriam 0 e o loop sairia na hora. Então a
+suspeita é o **endereço base**: se `MEM32(device + 0x934)` nunca foi
+inicializado e vale 0, `+0x400700` cai no VA 0x400700 do Xbox, **dentro de
+`.data` do jogo** (0x003B2720..0x0076BD1C) — valor arbitrário, e gira para
+sempre. Mesmo padrão do bug do fence.
+
+A tabela `NV2A_ACK` (6 entradas) já prevê isso no comentário do autor:
+*"extend as more handshakes turn up. A spin on a bit that is not listed
+still hangs -- run the title and the watchdog sample will name the
+register."*
+
+**Não estendi a tabela ainda**, porque estender só ajuda se o base estiver
+certo. Instrumentei a cadeia (`gpu_idle_trace`, sob o `RECOMP_FENCE_TRACE`
+que o launcher já liga):
+
+```
+[GPUIDLE] dev=0x... regbase=0x... put=... get=... pgraph=...  -> idle|SPINNING
+```
+
+- `regbase` dentro de `0xFD000000..0xFE000000` → a aperture está certa e o
+  problema é outro (algo escreve valores diferentes ali).
+- `regbase` = 0 ou fora da aperture → é o campo `device+0x934` que ninguém
+  preenche, e o fix é semeá-lo, não remendar a tabela de ack.
