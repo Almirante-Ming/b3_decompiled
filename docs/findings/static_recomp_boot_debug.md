@@ -2073,3 +2073,76 @@ Entao o caminho de registro e de interrupcao esta de pe.
 de 0x4E0 bytes: e nela que o XPP guarda o estado do controlador, e e de la que
 sai o que ele escreve em `HcControlHeadED`. Descobrir onde ele acha que seus
 EDs estao -- e por que esse endereco e `0x80000000` -- e a pergunta seguinte.
+
+## USB: o caminho do XPP mapeado, ate a DPC (15/out)
+
+Seguindo `FUN_00363388` com o REA, a cadeia inteira saiu:
+
+| funcao | o que e |
+|---|---|
+| `FUN_00363842` | registra o controlador: base MMIO 0xFED00000, tamanho 0x1000, `HalGetInterruptVector(1)` |
+| `FUN_00363388` | aloca o objeto do controlador (0x4E0+0x18 bytes), zera, encadeia e chama `FUN_00363884` |
+| `FUN_003657f4` | o alocador privado do XPP |
+| `FUN_00368634` | **a DPC do OHCI** -- onde a enumeracao deveria acontecer |
+
+### O alocador privado explica o `0xCC`
+
+```c
+if (restante < tamanho) { p = ExAllocatePoolWithTag(tamanho, 'USBD'); }
+else { p = 0x80001000 - restante; restante -= tamanho;
+       preenche p com 0xCCCCCCCC; }
+```
+
+Uma arena que **termina em 0x80001000 e cresce para baixo**, preenchida com
+`0xCCCCCCCC`, caindo no pool do kernel so se esgotar -- o que nunca acontece
+(nenhuma alocacao com tag 'USBD' aparece no log). E por isso que a primeira
+pagina da janela contigua esta cheia de `0xCC`: nao e lixo, e o alocador do
+XPP funcionando. A arena comeca uma pagina adentro no nosso runtime
+justamente para nao disputar essa pagina, e isso ja esta certo.
+
+### A DPC, traduzida
+
+`RECOMP_DPC_TRACE=<n>` mostra que a ISR enfileira, e que ela roda:
+
+```
+[KERNEL] DPC queued: dpc=0x80000B64 routine=0x00368634
+```
+
+O objeto da DPC esta dentro da arena do XPP, logo depois do objeto do
+controlador. Decompilada, com os offsets do OHCI no lugar:
+
+```c
+flags = state[0x10e];  state[0x10e] = 0;        /* o que a ISR deixou */
+if (flags & 2)    { ...percorre HccaDoneHead, retira os TDs...
+                    HcInterruptStatus = 2; }
+if (flags & 4)    { HcInterruptStatus = 4; HcInterruptDisable = 4; }
+...tres filas verificadas...
+if (alguma tem trabalho) { HcInterruptStatus = 4; HcInterruptEnable = 4; }
+if (flags & 0x40) { FUN_00367a15();              /* <- root hub: reset,
+                                                    enumeracao */
+                    HcInterruptStatus = 0x40; }
+HcInterruptEnable = 0x80000000;                  /* MIE */
+```
+
+Tudo gira em torno de `flags`, e `flags` vem de `state[0x10e]` -- o status de
+interrupcao que a **ISR** guardou. A enumeracao so comeca se o bit 0x40
+(RootHubStatusChange) estiver la.
+
+### Pistas eliminadas nesta rodada
+
+- **Nao e import de kernel faltando**: 147/147 resolvidos (ver a entrada
+  anterior; o "231 unresolved" era leitura fora dos limites nossa).
+- **Nao e DPC perdida**: a ISR enfileira e a rotina roda. Nenhuma linha de
+  "DPC routine not in dispatch" em nenhuma execucao.
+- **Nao e semantica de registrador de interrupcao**: `HcInterruptEnable` e
+  write-1-to-set e `HcInterruptDisable` write-1-to-clear no nosso modelo, que
+  e o que a ultima linha da DPC (`HcInterruptEnable = MIE`) exige.
+- **Nao e tradução de endereco nem a arena**: ambas ja corretas.
+
+### A pergunta seguinte, agora precisa
+
+A DPC roda e nao enumera, entao `flags` chega nela sem o bit 0x40 -- ou chega
+zerado. Medir `state[0x10e]` no instante em que a DPC e enfileirada responde
+de uma vez: se for zero, a ISR nao esta guardando o status (e o problema esta
+em como a ISR le `HcInterruptStatus`, ou em qual valor ele tem quando ela le);
+se tiver 0x40, o problema esta dentro de `FUN_00367a15`.
