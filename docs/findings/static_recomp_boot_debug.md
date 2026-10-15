@@ -2440,3 +2440,40 @@ A versao europeia roda a 50 Hz, e `RECOMP_FLIP_HZ=50` ja existe para isso. Mas
 o caminho PAL ainda trava no boot (ver a entrada da EEPROM), entao o runtime
 continua forcando NTSC-M mesmo com disco europeu. Quando o AV/NV2A tratar 50
 Hz, o pacing ja esta pronto.
+
+### A validacao e o teste que ficam (15/out)
+
+O guard contra seed no meio de instrucao ja existia em `tools/disasm`, com a
+valvula de escape que deixou o nosso passar: `_trust_mid_instruction_seed`
+mantem o seed quando ele decodifica como prologo **ou quando uma execucao
+chegou la**. A segunda e evidencia mais fraca do que parece -- um alvo de
+chamada indireta observado pode ser um ponteiro lido de memoria nao
+inicializada, e o runtime o registra fielmente.
+
+O comportamento nao foi mudado: o caso oposto e igualmente real (o comentario
+no codigo tem o exemplo do Halo, onde o sweep e que estava fora de fase), e
+nao da para validar uma mudanca desse tipo contra os outros titulos daqui.
+O que mudou e que deixou de ser mudo -- cada seed mantido apesar de partir uma
+instrucao sai nomeado:
+
+```
+  !! 3 seed(s) kept DESPITE landing inside a decoded instruction; each splits it:
+  !!   0x00347A99 is 1 byte(s) into the 3-byte instruction at 0x00347A98
+  !! If a function near one of these comes out short, drop that seed and
+  !! regenerate with --disasm.
+```
+
+Os rejeitados tambem passaram a ser nomeados, porque a falha oposta -- um ponto
+de entrada real descartado -- aparece como chamada indireta sem resolucao, e aí
+a pergunta e qual seed sumiu.
+
+`tools/disasm/test_seed_mid_instruction.py` fixa a politica, incluindo a
+valvula de escape, com a forma exata do bug (os bytes do `cmp` que o nosso seed
+partiu). Validado vendo falhar: com `_trust_mid_instruction_seed` devolvendo
+sempre True, o teste do caso sem evidencia quebra. Os 58 testes de
+`tools/disasm` passam.
+
+**Efeito colateral medido**: com o seed ruim removido, a lista de 399 nao tem
+*nenhum* endereco caindo no meio de instrucao -- nem mantido, nem rejeitado.
+Aquele seed realinhava o decode e fazia outros parecerem mal-alinhados; tirar
+um desfez a cascata.

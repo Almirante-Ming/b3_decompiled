@@ -125,6 +125,16 @@ Os que cobrem o nucleo grafico e de audio: `nv2a_vsh` (interpretador de
 vertex program), `nv2a_vsh_hlsl` (o tradutor para HLSL), `nv2a_combiner`,
 `apu_mixdown`, `audio_mixer`, `adpcm_decode`.
 
+Do lado da ferramenta, em `vendor/xboxrecomp/tools/`, os testes sao pytest:
+
+```sh
+cd vendor/xboxrecomp && python3 -m pytest tools/disasm -q
+```
+
+`tools/disasm/test_seed_mid_instruction.py` fixa a politica de seeds que caem
+dentro de uma instrucao -- ler o cabecalho dele antes de mexer em
+`config/seed_functions.json`.
+
 **Um teste novo tem de ser visto falhando.** O de `nv2a_vsh_hlsl` foi validado
 reintroduzindo o bug historico (tabela de campos um dword fora) e conferindo
 que quatro asserts quebram. Um teste que passou de primeira e nunca falhou
@@ -168,6 +178,14 @@ imprime cada mudanca com o `esp` de quem escreveu.
   `flip_pace()`.
 - **`nv2a_pgraph_d3d11.c` em `src/nv2a/` e esqueleto morto** para este
   titulo. O backend vivo e `src/d3d/nv2a_gpu.c`.
+- **Um seed em `config/seed_functions.json` que cai dentro de uma instrucao
+  nao adiciona uma funcao: ele trunca a que o contem, e em silencio.** Custou
+  a investigacao inteira do USB -- um seed dois bytes dentro de um `cmp` cortou
+  o construtor do controlador de 329 bytes para 25, e o sintoma foi "o jogo nao
+  le o controle". O disasm agora nomeia cada um desses na saida (linhas `!!`);
+  se uma funcao sair curta, suspeite deles primeiro. Regerar exige
+  `./regen_linux.sh --disasm`: sem a flag o disasm e pulado e os limites vem do
+  `functions.json` antigo.
 
 ## Prioridade atual
 
