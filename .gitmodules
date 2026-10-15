@@ -1,0 +1,8 @@
+[submodule "vendor/xboxrecomp"]
+	path = vendor/xboxrecomp
+	url = https://github.com/sp00nznet/xboxrecomp.git
+	branch = main
+[submodule "vendor/burnout3"]
+	path = vendor/burnout3
+	url = https://github.com/sp00nznet/burnout3.git
+	branch = main

@@ -2687,3 +2687,51 @@ Numa das execucoes de verificacao o relatorio marcou **23,32 fps**. Cinco
 execucoes seguintes, com e sem o instrumento de audio ligado, deram 59,18 a
 59,97. Nao reproduzi e nao tenho causa; fica anotado como visto, porque um
 numero desses some do registro se nao for escrito e volta a assustar depois.
+
+## Organizacao do repositorio, e o que ela revelou (15/out)
+
+Entraram `.recomp.json` (schema v1 do recomp.fyi, validado: 16 campos) e um
+`README.md` com o estado medido, o build e a execucao. `SPEC.md` ganhou um
+aviso de que esta pausado, porque o layout da secao 4 dele ja nao existe: os
+diretorios vazios `runtime/`, `decomp/` e `assets_pipeline/` foram removidos,
+substituidos pelos submodulos em `vendor/`. Saiu do indice um
+`xbe_to_elf.cpython-314.pyc` que estava versionado por acidente, e sairam dez
+BMP de 922 KB cada -- dumps de `RECOMP_FB_DUMP` com prefixo sem diretorio, que
+caiam na raiz de `vendor/burnout3`.
+
+O `.gitignore` tinha `vendor/`, o que contradizia os proprios gitlinks e
+impedia `git add vendor/burnout3`. Conteudo de submodulo nunca e rastreado pelo
+pai -- a linha so atrapalhava, e saiu. Entraram no lugar `*.bmp` e `*.log`,
+para os dumps de diagnostico.
+
+### A descoberta desagradavel: os dois submodulos apontam para o vazio
+
+Nao havia `.gitmodules`, entao `git submodule update` nunca teria funcionado.
+Escrevi um, e ao conferir os SHAs achei o problema de verdade:
+
+| gitlink | gravado | existe na origin? |
+|---|---|---|
+| `vendor/burnout3` | `a31aa53` | **nao** |
+| `vendor/xboxrecomp` | `346e5e1` | **nao** |
+
+Nenhum dos dois. Os remotos sao `sp00nznet/burnout3` e `sp00nznet/xboxrecomp`,
+onde nao temos escrita, e as origin/main estao em `79b578d` e `193e299`. Todo
+o trabalho deste esforco -- 5 commits em um, 29 no outro, tudo que leva o jogo
+de tela preta a 60 fps -- existe **apenas nesta maquina**. Um clone deste
+repositorio hoje nao compila nada.
+
+Atualizei o gitlink de `vendor/burnout3` para `11902ce` de qualquer forma: o
+ponteiro passa a registrar o commit de onde as medicoes vieram, que e verdade
+util mesmo sem resolver. O conserto nao e meu para fazer -- precisa de fork dos
+dois repositorios e push das branches locais, e ai as duas `url` do
+`.gitmodules` trocam para os forks. Esta escrito no README e no CLAUDE.md para
+que ninguem prometa um `submodule update` que falha.
+
+### De passagem: os testes conferidos rodando
+
+O README manda rodar duas suites, entao rodei as duas antes de mandar.
+`tests/nv2a_vsh_hlsl` compila e passa (`ok`). As de `tools/disasm` pedem
+`capstone` **e** `pytest`, e o pytest nao estava no ambiente -- precisou de um
+venv. **58 testes passam em 0,48 s**, incluindo os 5 de
+`test_seed_mid_instruction.py`. A dependencia agora esta dita no README, que
+antes dava o comando como se funcionasse em qualquer maquina.

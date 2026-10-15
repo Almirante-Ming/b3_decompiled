@@ -1,0 +1,33 @@
+{
+  "$schema": "https://recomp.fyi/schema/v1.json",
+  "game": "Burnout 3: Takedown",
+  "wikidata": "Q2079604",
+  "system": "Xbox",
+  "type": "recomp",
+  "original": {
+    "region": "Europe",
+    "serial": "4541005B",
+    "sha1": "8b898f43583179aca4058187be9afa4580ccb508"
+  },
+  "project": "Burnout 3 Recompiled",
+  "status": "in-progress",
+  "targets": ["Windows"],
+  "toolchain": "xboxrecomp",
+  "approach": "Static recompilation of the retail XBE to C. The title's own D3D8LTCG writes an NV2A pushbuffer, which the runtime executes: vertex programs and register combiners are translated to HLSL and drawn on Direct3D 11, with a software rasteriser as the per-batch fallback.",
+  "maintainers": [
+    { "name": "Almirante-Ming", "link": "https://github.com/Almirante-Ming" }
+  ],
+  "links": [
+    { "label": "Repository", "url": "https://github.com/Almirante-Ming/b3_decompiled" },
+    { "label": "Toolchain (xboxrecomp)", "url": "https://github.com/sp00nznet/xboxrecomp" }
+  ],
+  "help": [
+    "Hang on the profile-creation screen",
+    "PAL 50 Hz boot path (the runtime forces NTSC-M even for a PAL disc)",
+    "MCPX DSP (GP/EP) emulation, today a stub",
+    "Audio for the FMV player, which decodes video only",
+    "Telling a guest VA from a physical offset in the memory map"
+  ],
+  "tags": ["xbox", "nv2a", "d3d11", "renderware"],
+  "notes": "Boots, renders on the GPU at a paced 60 fps, enumerates two pads, and plays music and effects. Not playable yet: it hangs on the profile-creation screen, so a save cannot be created. Everything claimed here is measured and the numbers are in docs/findings/. English here because this file feeds a public index; the rest of the repository is in Portuguese."
+}

@@ -15,19 +15,31 @@ pausado em favor do `xboxrecomp`. O estado real vive em
 -- esse arquivo e a fonte de verdade sobre o que foi medido, o que caiu, e o
 que continua em aberto. **Leia o fim dele antes de comecar qualquer coisa.**
 
+O [README.md](README.md) e a versao curta e para fora: estado medido,
+instrucoes de build e de execucao. `.recomp.json` carrega os metadados no
+schema do recomp.fyi, e inclui o SHA-1 do `default.xbe` com que tudo foi
+medido.
+
 ## Onde fica o que
 
 ```
 burnout3_decompiled/          este repo: notas, ferramentas de RE, SPEC
   docs/findings/              o diario tecnico (o arquivo acima)
   tools/                      parsing de XBE/XDVDFS, assinaturas, Ghidra
-  vendor/xboxrecomp/          o runtime compartilhado (fork do usuario)
+  vendor/xboxrecomp/          o runtime compartilhado (upstream sp00nznet)
   vendor/burnout3/            o projeto do titulo (main.c, seeds, config)
 ```
 
-`vendor/` nao e versionado aqui, exceto o ponteiro de commit de
-`vendor/xboxrecomp`. Mudanca de runtime se commita **la**, e aqui entra uma
-entrada de findings com o ponteiro atualizado.
+Os dois `vendor/` sao submodulos declarados em `.gitmodules`. Mudanca de
+runtime se commita **la**, e aqui entram o gitlink atualizado (`git add
+vendor/<nome>`) e uma entrada de findings.
+
+**Os dois gitlinks estao pendurados hoje**, e e preciso saber disso antes de
+confiar num clone: os commits que fazem o jogo rodar nunca foram publicados --
+29 em `vendor/xboxrecomp` e 5 em `vendor/burnout3`, so nesta maquina. Os
+remotos configurados sao os upstream da `sp00nznet`, sem escrita nossa, logo os
+SHAs gravados nao resolvem la. So some quando houver fork e push; ate la, nao
+prometa que `submodule update` funciona.
 
 No runtime:
 

@@ -1,4 +1,10 @@
+# Seu disco do jogo, e qualquer imagem dele. Nunca entra no repositorio.
 *.iso
+*.xiso
+
+# Dumps de diagnostico (RECOMP_FB_DUMP e afins)
+*.bmp
+*.log
+
 node_modules
-vendor/
 __pycache__/

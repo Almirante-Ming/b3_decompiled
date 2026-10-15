@@ -1,5 +1,13 @@
 # Burnout 3 (Xbox) — Decompilação e Recompilação Nativa x86 (Windows/Linux)
 
+> **Este documento está pausado, e é histórico.** O plano abaixo é a
+> decompilação manual função a função. O que de fato roda hoje é a
+> recompilação estática com o `xboxrecomp` — veja o [README](README.md) e o
+> diário em `docs/findings/`. O layout de pastas da seção 4 (`decomp/`,
+> `runtime/`, `assets_pipeline/`) foi substituído pelos submódulos em
+> `vendor/`, e os diretórios vazios foram removidos; não os recrie. Segue
+> valendo daqui: os fatos da seção 2, e as ferramentas de `tools/`.
+
 ## 1. Objetivo
 
 Construir uma pipeline de ferramentas que parte de uma pasta já extraída do
