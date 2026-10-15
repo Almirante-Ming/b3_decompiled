@@ -2329,3 +2329,64 @@ Vale registrar porque as duas pareciam certas:
 
 Nenhuma recompilacao se justifica ainda: toda funcao desta cadeia existe no
 dispatch e roda. O que falta e um valor, nao uma funcao.
+
+## RESOLVIDO: o USB enumera -- era um seed nosso caindo dentro de uma instrucao (15/out)
+
+A causa raiz do pool vazio, e com ela do input inteiro.
+
+`config/seed_functions.json` tinha `0x0036365F`, com a nota "alvo de chamada
+indireta observado em runtime; decodifica como corpo de funcao". Decodificar
+nao prova entrada -- x86 decodifica em quase qualquer offset. Em `0x0036365B`
+estao os bytes
+
+```
+38 05 b0 2e 36 00     cmp byte [0x00362EB0], al
+```
+
+e `0x0036365F` cai **dentro** deles, nos dois ultimos bytes.
+
+O estrago: o disassembler cortou `sub_0036364A` naquele ponto. Essa funcao --
+o construtor da estrutura do controlador USB -- saiu do recompilador com **25
+bytes e 9 instrucoes em vez de 329 e 96**, terminando logo apos o `cmp`, sem
+salto e sem return. Todo o corpo que preenche os contadores do pool de
+descritores ficou de fora, e no C levantado isso aparece como uma funcao que
+simplesmente acaba.
+
+Dai a cadeia inteira que vinha sendo investigada: contadores zerados -> os dois
+lacos de encadeamento nao dao uma volta -> `[0x755048]` fica em zero ->
+`sub_00366620` devolve NULL -> `sub_00366633` erra com `0x80000100` -> nenhum
+ED -> `0 setups` -> sem enumeracao -> sem pad -> o jogo nao sai do attract.
+
+### Medido, antes e depois
+
+Removido o seed e regerado com `--disasm` (o script pula o disasm sem essa
+flag, e os limites vinham do `functions.json` antigo):
+
+| | antes | depois |
+|---|---|---|
+| `sub_0036364A` | 25 bytes, 9 insns | **329 bytes, 96 insns** |
+| free-list `[0x755048]` | 0 a execucao toda | encadeia `825B41F0 -> 825B4310 -> ...` |
+| OHCI | `0 periodic transfers; 0 setups` | **14326 transfers, 14326 reports, 12 setups** |
+| `HcControlHeadED` | `00000000` | `025B5030`, com EDs de funcao 1 e 2 |
+| vozes iniciadas | `VOICE_ON 4` (4 handles) | **`VOICE_ON 28` (11 handles)** |
+
+Os dois controles enumeram, seus endpoints de interrupcao poll am, e o titulo
+-- agora dirigivel -- passa a iniciar vozes de verdade.
+
+### A licao, que vale alem deste bug
+
+**Um seed que cai dentro de uma instrucao nao adiciona uma funcao: ele trunca
+a que o contem, e em silencio.** O sintoma aparece a uma distancia enorme da
+causa -- aqui, "o jogo nao le o controle" -- e nada no caminho acusa. O
+`detection_method` era `seed_vtable_thunk` e o `has_prologue` era `false`;
+qualquer um dos dois ja era motivo de desconfianca.
+
+Vale validar no proprio disasm: um seed cujo endereco nao coincide com o
+inicio de uma instrucao decodificada deve ser recusado com erro, nao aceito.
+
+### E o audio, pela regra de decisao que ficou registrada
+
+A entrada anterior dizia: se `VOICE_ON` subir acima de 4 e o `PCM peak`
+continuar 0, o defeito esta na busca das amostras. Subiu para 28 em 11 handles
+e o pico continua 0.00. Entao o proximo alvo do audio e `voice_get_samples()`
+-- nao o inicio das vozes.
