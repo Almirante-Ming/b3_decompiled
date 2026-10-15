@@ -1825,3 +1825,75 @@ Onde continuar, em ordem de custo:
   (heard/lost por mixbin) usados na investigacao do Jet Set Radio Future.
   Eles nao existem mais no codigo; recria-los diz de imediato se o titulo
   sequer inicia vozes, ou se as inicia e elas sao descartadas num bin.
+
+### Anotado para depois: a janela nao redimensiona
+
+`fb_present.c` e GDI desenhando 1:1, sem escala, e sem tratar `WM_SIZE`.
+Suportar redimensionamento e um `StretchBlt` e algumas linhas, mas mexe com
+resolucao e desempenho -- escalar na CPU a cada frame, ou mudar a resolucao
+interna do render target, sao decisoes diferentes com custos diferentes. Fica
+para depois que comandos, video e audio estiverem funcionais.
+
+## Audio: o monitor apagava o frame, e onde o silencio sobra (15/out)
+
+Seguindo a pista 2 da entrada anterior. A cadeia e
+`se_frame` → `mcpx_apu_vp_frame` (vozes → mixbins) → `mcpx_apu_dsp_frame`
+(mixbins → `monitor.frame_buf`) → `mcpx_apu_monitor_frame` (→ XAudio2).
+
+### O defeito estrutural, consertado
+
+O caminho XAudio2 do monitor **limpava `frame_buf`** e re-renderizava 1024
+amostras do mixer de software, quatro blocos de 256 por vez. Duas coisas
+erradas, e uma escondia a outra:
+
+- o `memset` jogava fora tudo o que a VP e o DSP acabaram de computar, entao
+  um titulo que dirige os registradores da APU direto -- todo titulo com
+  DirectSound linkado estaticamente, Burnout 3 incluido -- so podia ser mudo;
+- submetia quatro vezes o audio que o frame continha, do qual a fila do
+  XAudio2 descartava duas submissoes em tres. A *taxa* saia certa, 48 kHz
+  exatos, o que fazia o defeito parecer placa de som morta.
+
+O desenho pretendido ja fechava e so nao era seguido: `mcpx_apu_dsp_frame()`
+escreve 32 amostras por chamada num offset rotativo, oito chamadas enchem as
+256 de `frame_buf`, e `throttle()` paceia essas oito em `EP_FRAME_US` -- 256
+amostras a 48 kHz. Agora o monitor submete exatamente esse frame, e o mixer de
+software acumula por cima em vez de substituir.
+
+O caminho waveOut tem o mesmo defeito e ficou como esta: seus headers sao
+preparados com tamanho fixo e nada aqui o exercita, porque o XAudio2
+inicializa primeiro e ganha. Anotado no proprio arquivo.
+
+### Onde o silencio sobra
+
+Com isso consertado o pico continuou zero, e os instrumentos
+(`RECOMP_APU_LEVEL=1`) dizem exatamente onde parar de procurar:
+
+```
+se_frames 1280/s (40960 amostras/s), monitor frames 160/s
+mixbin peak 0.0000, bins used 0x00000000
+vozes vistas 5056, ativas 5056
+paused 0, muted 0, mixed 5056
+PCM peak 0.0000, envelope de amplitude peak 1.0000
+```
+
+Cinco mil vozes por segundo, todas ligadas nas listas de voz, todas ativas,
+nenhuma pausada, nenhuma mutada, envelope de amplitude totalmente aberto --
+e **as amostras lidas sao silencio**. Nao e roteamento de mixbin, nao e
+envelope, nao e mute, nao e a saida. E a busca do PCM.
+
+O proximo passo e `voice_resample()`: o endereco do buffer da voz
+(`NV_PAVS_VOICE_CUR_PSL_START` e companhia), o formato declarado, e os bytes
+que ele de fato le da memoria do guest. Um endereco que resolve para memoria
+nao escrita devolve zeros exatamente assim.
+
+### Teste de regressao, e o metodo
+
+`tests/nv2a_vsh_hlsl` trava o decode do microcodigo contra codificacoes
+conhecidas, montadas com o mesmo helper de `tests/nv2a_vsh` para que os dois
+nao divirjam sobre o hardware. Foi validado **vendo falhar**: reintroduzindo o
+bug historico do `d3d8_vsh.c` (tabela de campos um dword fora), quatro asserts
+quebram de imediato. Um teste que passou de primeira e nunca falhou pode nao
+estar afirmando nada.
+
+As diretrizes do projeto para quem chega depois estao em
+[`CLAUDE.md`](../../CLAUDE.md).
