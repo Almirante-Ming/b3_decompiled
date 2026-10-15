@@ -2004,3 +2004,72 @@ resolve o head da lista de controle, e por onde comecar.
 
 Isso coloca o **input como o portao**: e o primeiro item da prioridade
 declarada, e tambem o que bloqueia a verificacao do audio.
+
+## USB: o que o driver faz, e duas pistas eliminadas (15/out)
+
+Seguindo o portao do input. O dialogo com o controlador, lido no trace de
+registradores, e coerente ate o fim:
+
+```
+write +0x04 = 000000BE     HcControl: listas habilitadas, estado operacional
+read  +0x54 = 00010101     porta: CCS=1 conectado, PPS=1 alimentado, CSC=1
+write +0x54 = 00010000     limpa CSC
+write +0x54 = 80000010     SetPortReset
+read  +0x54 = 00100103     CCS=1, PES=1 habilitada, PRSC=1 reset concluido
+write +0x54 = 00100000     limpa PRSC
+write +0x08 = 00000002     ControlListFilled
+write +0x20 = 00000000     ...com HcControlHeadED em zero
+```
+
+Ou seja: o driver reseta, habilita, declara a lista de controle cheia -- e o
+ponteiro da lista esta vazio. Nenhuma transferencia e enfileirada, nada
+enumera, e ele reseta a porta de novo, em ciclo.
+
+`RECOMP_USB_CLF=1` imprime, nesse instante, a pagina onde o XPP monta suas
+estruturas. Ela esta preenchida de `CCCCCCCC` -- fill de memoria nao
+inicializada -- com `DEADBEEF` (nosso veneno) no endereco que o head aponta.
+O driver declara cheia uma lista que nao construiu.
+
+### Pista eliminada 1: nao e funcao de kernel faltando
+
+O log de boot dizia, desde sempre: **"WARNING: 231 kernel imports are
+unresolved - game may crash!"**, com 231 linhas de "Unresolved kernel ordinal
+0". Parecia a explicacao obvia.
+
+Era bug nosso, e dos caros. `XBOX_KERNEL_THUNK_TABLE_SIZE` e 378 -- o numero
+de slots de export do xboxkrnl.exe -- enquanto um titulo importa uma fracao.
+O laco andava pelos 378 e, passado o fim da tabela do titulo, lia
+`g_thunk_ordinals[]` (147 entradas) **231 entradas alem do fim**. Os valores
+fora dos limites vinham zero, e cada um virava um "unresolved ordinal 0".
+
+Corrigido, o Burnout 3 reporta `147/147 imports resolved, 0 unresolved`.
+Nenhuma funcao de kernel falta. (Esse aviso e a primeira coisa do log e nomeia
+o kernel; toda investigacao futura comecaria suspeitando dele.)
+
+### Pista eliminada 2: nao e tradução de endereço
+
+`bus_resolve()` ja converte fisico para a janela contigua, e `guest_ok()` ja
+aceita a janela. A arena contigua ja comeca uma pagina adentro exatamente para
+nao colidir com a arena privada do XPP. Nada disso esta faltando.
+
+### O que o REA diz do codigo do titulo
+
+A unica referencia a `0xFED00000` no binario inteiro esta em `FUN_00363842`
+(secao XPP, 66 bytes). Ela monta um descritor e registra o controlador:
+
+```c
+local_1c = 3;              /* tipo */
+local_18 = 0xFED00000;     /* base MMIO do OHCI0 */
+local_14 = 0x1000;         /* tamanho */
+local_10 = HalGetInterruptVector(1, &irql);   /* IRQ 1 = USB0 */
+FUN_00363388(descritor, 0x4E0);
+```
+
+`HalGetInterruptVector` existe e devolve o vetor, a ISR e instalada, e as
+interrupcoes chegam e sao reivindicadas (`raised 00000040 -> ISR claimed it`).
+Entao o caminho de registro e de interrupcao esta de pe.
+
+**O proximo passo** e `FUN_00363388`, que recebe o descritor e uma estrutura
+de 0x4E0 bytes: e nela que o XPP guarda o estado do controlador, e e de la que
+sai o que ele escreve em `HcControlHeadED`. Descobrir onde ele acha que seus
+EDs estao -- e por que esse endereco e `0x80000000` -- e a pergunta seguinte.
