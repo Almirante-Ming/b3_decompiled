@@ -1583,3 +1583,123 @@ Parte A primeiro: contida, sem questao de licenca, retorno medido (21 -> 35
 fps). Parte B e um projeto a parte, e so vale a pena se o objetivo for
 performance de verdade -- e aí a decisao de licenca precisa ser tomada antes
 de escrever a primeira linha.
+
+## Os graficos na GPU: o que ja existia, o que estava errado, e o que foi feito (15/out)
+
+A entrada anterior estimou a Parte B -- backend de GPU -- como "escrever o
+backend inteiro", com os ~280 KB de C do xemu como referencia e uma decisao de
+licenca a tomar antes da primeira linha. Antes de escrever qualquer coisa,
+duas leituras do nosso proprio codigo mudaram a conta.
+
+### Achado 1: os dois tradutores ja estavam no binario, e nunca rodaram
+
+`src/d3d/` tem, escrito por nos e compilado no `burnout3.exe` desde sempre:
+
+| arquivo | o que faz | cache |
+|---|---|---|
+| `d3d8_combiners.c` (39 KB) | register combiners -> HLSL | sim, por hash do estado |
+| `d3d8_vsh.c` (51 KB) | microcodigo de vertex -> HLSL | sim, por hash do microcodigo |
+
+Sao o equivalente de `psh.c` e `vsh.c` do xemu. Nenhum dos dois roda: eles
+pendem da camada D3D8 HLE, e um titulo que linka D3D8LTCG estaticamente --
+Burnout 3 -- nao faz chamada D3D8 nenhuma para interceptar. Escreve o
+pushbuffer, e quem o consome e `src/kernel/nv2a_pb_exec.c`.
+
+Ou seja: a parte cara da Parte B estava pronta e sem uso, do nosso lado da
+licenca. Por isso nao fui ao REA no binario do xemu. Entender a semantica do
+hardware a partir de um binario GPL compilado e a fonte mais cara e menos
+precisa disponivel quando ja existe, na mesma arvore, uma implementacao de
+referencia nossa que roda todo frame: `nv2a_combiner.c` e `nv2a_vsh_interp.c`.
+O shader tem de calcular o que o interpretador calcula; essa e a especificacao,
+e ela e verificavel.
+
+### Achado 2: o tradutor de vertex shader decodifica errado
+
+`d3d8_vsh.c` poe o opcode MAC no bit 21 da instrucao de 128 bits. O hardware o
+poe no bit 21 da **palavra 1** -- esta um dword fora, e quase toda a tabela de
+campos junto. Comparado com `nv2a_vsh_interp.c`, que roda os programas deste
+titulo todo frame e cujas regras foram medidas (inclusive a de que um ILU
+pareado com um MAC so pode escrever R1, que custou "todo vertice 3D em c[59]"
+para ser descoberta), as duas tabelas discordam em praticamente tudo.
+
+Nunca ninguem notou porque aquele caminho nunca executou. Entao o tradutor de
+vertex foi reescrito -- `src/d3d/nv2a_vsh_hlsl.c` -- transliterado do
+interpretador, instrucao por instrucao. `d3d8_vsh.c` fica como esta: e do
+caminho HLE, que nenhum teste daqui exercita.
+
+### O que foi construido
+
+`src/d3d/nv2a_gpu.c` (+ `.h`): dispositivo D3D11 sem swapchain e sem janela,
+render target por superficie, caches de shader/textura/sampler/estado, e
+leitura de volta para a memoria do guest no flip -- entao `fb_present.c`, o
+player de FMV e a propria inspecao de superficie do titulo continuam
+funcionando sem saber que mudou nada.
+
+Ligado em `nv2a_pb_exec.c` em quatro pontos: o clear, as duas chamadas de
+`raster_batch()`, e o flip. **Toda recusa cai de volta no rasterizador de
+software, por batch**, com o motivo contado no relatorio. Ligar isso nao pode
+piorar um frame: no pior caso e o mesmo frame na mesma velocidade.
+
+Tres divergencias entre o gerador de pixel shader e `nv2a_combiner.c` foram
+encontradas lendo um contra o outro, e sao corrigidas por substituicao de texto
+no HLSL gerado (checada e contada):
+
+1. `r0` comeca como `float4(0,0,0,t0.a)`, nao como `t0`. O gerador semeava os
+   quatro canais da textura 0.
+2. O registrador FOG le o fator de nevoa interpolado por vertice. O `PS_IN` do
+   gerador nao tinha entrada de fog nenhuma e lia o alfa da *cor* da nevoa --
+   com nevoa opaca, nevoa nenhuma.
+3. Os flags de complemento/clamp do V1+R0 do combinador final (CW1 bits 5-7)
+   viram expressao de verdade, em vez de `saturate(v1+r0)` sempre.
+
+E um bug de codificacao so nosso: o campo de escala de saida vale 6 para
+SHIFTRIGHT_1 no hardware e 5 no enum do gerador, entao `x/2` virava `x`.
+
+### Medido, nao estimado
+
+Rodando o `burnout3.exe` daqui mesmo (o WSL executa binario Windows), mesma
+cena, mesmo binario, so a flag muda:
+
+| | fps | draws/s | uploads de superficie |
+|---|---|---|---|
+| software | ~220 | 27 | -- |
+| GPU | ~440-560 | 400 | 4 no total |
+
+E a imagem: o frame de texto ("There is a problem with the disc...") sai
+**identico** nos dois caminhos, pixel a pixel no mesmo lugar, com 18% mais
+pixels nao-pretos na versao GPU -- que e exatamente o que filtro bilinear e
+mipmaps fazem nas bordas das letras. Isso valida de ponta a ponta: traducao de
+vertex program, traducao de combiners, upload de textura, cache de shader
+(1 VS + 1 PS compilados, reusados em 15 mil draws), e leitura de volta.
+
+Os uploads caindo de "um por frame" para 4 vem de uma impressao digital da
+superficie (um dword a cada 16) comparada antes de subir: a GPU so recarrega a
+memoria do guest quando alguem de fora realmente escreveu ali.
+
+### Como ligar
+
+```
+RECOMP_PB_GPU=1          liga o caminho de GPU
+RECOMP_PB_GPU_DUMP=1     escreve o HLSL gerado em nv2a_{vs,ps}_<hash>.hlsl
+```
+
+### O que ainda nao faz
+
+- Pontos e linhas caem para o software (so triangulos sobem).
+- O buffer de profundidade da GPU nunca e lido de volta; um titulo que leia
+  profundidade continua vendo o zbuf de software.
+- Culling desligado, igual ao software -- `SET_CULL_FACE` ainda nao e decodificado.
+- Modos de estagio de textura alem de 2D/3D/cube (bump, dot-product, leitura
+  dependente) sao desenhados como 2D, e contados.
+- A leitura de volta no flip e sincrona; dois buffers de staging a tornariam
+  pipeline. So vale medir depois que a cena pesada estiver em cena.
+
+### Duas armadilhas do ambiente, medidas no caminho
+
+- **Variavel de ambiente do Linux nao atravessa para o processo Windows.**
+  Rodar `RECOMP_PB_GPU=1 ./bin/burnout3.exe` do WSL nao liga nada: e preciso
+  `WSLENV=RECOMP_PB_GPU:...`. A primeira execucao "sem efeito" foi isso, nao o
+  codigo.
+- Rodando pelo caminho UNC (`\\wsl.localhost\...`), o titulo para na tela
+  "There is a problem with the disc you are using". Nao investigado; pelo
+  `Play (Keyboard).cmd`, do lado Windows, nao e o que acontece.
