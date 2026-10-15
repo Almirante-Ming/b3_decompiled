@@ -2146,3 +2146,49 @@ zerado. Medir `state[0x10e]` no instante em que a DPC e enfileirada responde
 de uma vez: se for zero, a ISR nao esta guardando o status (e o problema esta
 em como a ISR le `HcInterruptStatus`, ou em qual valor ele tem quando ela le);
 se tiver 0x40, o problema esta dentro de `FUN_00367a15`.
+
+## USB: o controlador ESTA operante -- a cadeia inteira verificada (15/out)
+
+A pergunta era se o controlador funciona antes de seguir com o resto. Funciona,
+e cada elo foi medido, nao deduzido:
+
+| elo | evidencia |
+|---|---|
+| porta ve o dispositivo | `read +0x54 = 00010101` (CCS, PPS, CSC) |
+| reset conclui | `read +0x54 = 00100103` (PES=1, PRSC=1) |
+| interrupcao sobe | `[OHCI0] raised 00000040 -> ISR claimed it` |
+| a ISR grava o status | `[context+0x438] = 0x00000040` |
+| a DPC do OHCI roda | `DPC queued: dpc=0x80000B64 routine=0x00368634` |
+| o tratador de root hub entrega a conclusao | `[context+0x470]` alterna `0x00365986` / `0`: o callback e chamado e zerado |
+| o callback arma a espera de 10 ms | `KeSetTimer(&0x41AC90, -10ms, &dpc 0x41AC74)` |
+| o timer dispara e roda sua rotina | `timer 0x0041AC90 due: dpc=0x0041AC74 routine=0x003665CC` |
+
+Nenhum "DPC routine not in dispatch" em nenhuma execucao, entao a rotina do
+timer tambem roda de verdade.
+
+Dois instrumentos novos, porque nenhum dos dois caminhos era observavel:
+
+- `RECOMP_DPC_TRACE=<n>[,<offset>]` -- as primeiras n DPCs enfileiradas, com a
+  rotina, o contexto e, com offset, um dword do contexto. Foi assim que
+  `state[0x438]` (o status que a ISR guarda) e `state[0x470]` (o callback de
+  conclusao de reset) foram lidos.
+- `RECOMP_TIMER_TRACE=<n>` -- os primeiros n timers a vencer, com a rotina que
+  rodam. **Necessario porque um timer roda sua DPC direto, sem passar por
+  KeInsertQueueDpc**: no trace de DPC ele e invisivel, e "nao aparece" leria
+  como "nao disparou", que e falso.
+
+### O proximo elo, e por que ele e dificil de ler
+
+`FUN_003665CC` -- a rotina que roda depois dos 10 ms de recuperacao do reset,
+onde a enumeracao deveria criar o endpoint de controle e pedir o descritor.
+
+O Ghidra **nao reconhece funcao nesse endereco**: nada no binario a chama
+diretamente, so o ponteiro de DPC chega la. E a mesma classe de alvo que
+`config/seed_functions.json` existe para cobrir no recompilador -- e o
+recompilador a tem (nao ha "not in dispatch"). Para lê-la vai ser preciso
+forcar uma funcao no Ghidra nesse endereco, ou segui-la por rastreio em
+execucao.
+
+O que se sabe do estado depois dela: nenhum ED aparece em lugar nenhum da
+arena do XPP, e `HcControlHeadED` continua zero. Entao ou ela nao chega a
+montar o endpoint, ou monta e algo logo depois o desfaz.
