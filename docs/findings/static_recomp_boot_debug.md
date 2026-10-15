@@ -1471,3 +1471,61 @@ secao de fabrica real e cifrada e tem layout proprio, que eu nao verifiquei.
 Fabricar estrutura nao conferida e pior que devolver zeros: zeros um titulo
 reconhece como ausencia, um campo plausivel no lugar errado ele trata como
 dado. Removido; devolve zeros.
+
+## FPS: medido, e nao era nada do que eu supus (15/out)
+
+Com o jogo nos menus e videos, ~21 fps. Os numeros do relatorio do GPU, por
+intervalos de 5 s:
+
+| | por 5 s | por frame |
+|---|---|---|
+| flips | ~106 | -- (**~21 fps**) |
+| draws | ~214 | **2** |
+| triangulos | ~425 | **4** |
+| pixels | ~24,2 M | **~228.000** |
+
+Dois draws e quatro triangulos por frame, com 228 mil pixels: e um quad de
+tela cheia (640x448 = 286k). **Nao e carga de geometria nem o estrangulamento
+do flush** -- e o custo por pixel do rasterizador, ~4,8 M px/s em 4 threads,
+umas 10-40x mais lento do que um rasterizador escalar em C deveria ser.
+
+### Quatro experimentos, tres resultados nulos
+
+| mudanca | fps | ganho |
+|---|---|---|
+| base | ~21 | -- |
+| recíproco icado (16 divisoes/pixel -> 1) | ~21,5 | **+3%** |
+| funcoes de aresta incrementais | ~21 | **0%** |
+| sem `nv2a_rc_eval` | ~35 | **+65%** |
+| sem eval **e** sem os 4 fetches de textura | ~35 | +65% (fetches ~0%) |
+
+As dezesseis divisoes por pixel no caminho dos combiners pareciam a resposta
+obvia -- a ~20-40 ciclos cada seriam centenas de ciclos por pixel -- e deram
+3%. As arestas recalculadas do zero pareciam a segunda resposta obvia e deram
+zero; essa mudanca foi **revertida**, porque codigo que nao se paga nao fica.
+Os fetches de textura, que eu esperava caros, custam nada.
+
+### O unico alvo real
+
+`nv2a_rc_eval` sozinho e ~40% do tempo de frame. Olhando a funcao, ela faz por
+pixel o que e constante por batch:
+
+- zera um banco de 16x4 floats (64 stores) e preenche mais 28;
+- percorre ate 8 estagios **decodificando campos de bits** de `color_icw`,
+  `color_ocw`, `alpha_icw`, `alpha_ocw` a cada estagio, com switch sobre
+  modificadores e fontes.
+
+O programa de combiners nao muda dentro de um batch. Compila-lo uma vez por
+batch para uma lista de operacoes ja decodificadas -- indices de registrador,
+modificador, destino -- tira toda a extracao de bits e o branching do laco de
+pixel, e permite inicializar so os registradores que o programa de fato le
+antes de escrever.
+
+E a otimizacao com retorno conhecido: ~40%. As outras tres eu ja tentei e
+medi, e ficam registradas aqui para ninguem repetir.
+
+### Instrumento que fica
+
+`RECOMP_RAST_NORC=1` pula o avaliador, `=2` pula tambem os fetches. A imagem
+sai errada de proposito: serve para medir o custo de cada metade, nao para
+jogar.
