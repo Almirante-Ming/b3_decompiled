@@ -1529,3 +1529,57 @@ medi, e ficam registradas aqui para ninguem repetir.
 `RECOMP_RAST_NORC=1` pula o avaliador, `=2` pula tambem os fetches. A imagem
 sai errada de proposito: serve para medir o custo de cada metade, nao para
 jogar.
+
+## Traduzir shaders como o xemu: escopo e licenca (15/out)
+
+A ideia separa-se em duas partes muito diferentes.
+
+### Parte A -- "pre-compilar" os combiners, no rasterizador que ja temos
+
+Nao precisa de xemu nem de GPU: decodificar o programa de combiners **uma vez
+por batch** para uma lista de operacoes ja resolvidas, e so executa-la por
+pixel. Hoje `nv2a_rc_eval` refaz por pixel o que e constante por batch.
+
+**O teto ja esta medido**: desligar `nv2a_rc_eval` por inteiro da 35 fps
+contra 21. Ou seja, a Parte A, feita perfeitamente, chega a ~35 fps -- nao a
+60. Isso e um limite medido, nao uma estimativa.
+
+### Parte B -- traduzir para shaders de GPU de verdade, como o xemu faz
+
+O que o xemu tem, em tamanho de fonte:
+
+| arquivo | tamanho |
+|---|---|
+| `glsl/psh.c` (combiners -> GLSL) | 71,6 KB |
+| `glsl/vsh*.c` (vertex programs) | 70,3 KB |
+| `pgraph.c` (maquina de estados) | 107,7 KB |
+| `swizzle.c`, `s3tc.c`, `geom.c` | ~35 KB |
+
+O nosso `src/nv2a/nv2a_pgraph_d3d11.c` existe e esta no build, mas **nada o
+chama**: zero HLSL, zero criacao de dispositivo D3D11, 15 metodos parseados.
+E esqueleto. "Terminar o caminho D3D11" e escrever o backend inteiro --
+estado, geracao de shaders para vertex programs **e** combiners, upload de
+textura com swizzle e DXT, render targets, e leitura de volta do framebuffer
+para a memoria do guest, porque o titulo inspeciona a superficie.
+
+### Licenca -- o ponto que decide
+
+`psh.c` do xemu:
+
+```
+Copyright (c) 2013 espes / 2015 Jannik Vogel / 2020-2025 Matt Borgerson
+... GNU General Public License ... either version 2 or (at your option) 3
+```
+
+**GPL.** Estudar a estrutura para entender a semantica do hardware e uma
+coisa; copiar codigo e outra, e levaria o projeto inteiro para GPL. Essa e
+uma decisao do dono do projeto, nao minha. Reimplementar a partir da
+documentacao do NV2A e de observacao do nosso proprio trafego de pushbuffer
+nao tem esse problema.
+
+### Recomendacao
+
+Parte A primeiro: contida, sem questao de licenca, retorno medido (21 -> 35
+fps). Parte B e um projeto a parte, e so vale a pena se o objetivo for
+performance de verdade -- e aí a decisao de licenca precisa ser tomada antes
+de escrever a primeira linha.
