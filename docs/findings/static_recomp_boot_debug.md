@@ -1770,3 +1770,58 @@ pelo pushbuffer, com vertex program e combiners traduzidos. O frame de
 software do logo, por sua vez, mostra justamente os artefatos reclamados:
 padrao de xadrez sobre o fundo inteiro e uma emenda diagonal no canto
 superior. Sao do rasterizador, e nao aparecem no caminho de GPU.
+
+## O jogo acelerado: o flip nao esperava o scanout (15/out)
+
+Com a GPU a ~100 fps o jogo passou a rodar perto de 1,7x. Nao e dos menus: o
+titulo paceia a simulacao inteira em "frames apresentados", e esse contador
+avanca uma vez por flip (`xbox_Nv2aFrameCounterFlip`), entao ele anda tao
+rapido quanto o runtime consegue desenhar. Com o rasterizador de software a 21
+fps isso era invisivel -- rodava devagar, o que se le como engasgo e nao como
+relogio errado.
+
+No hardware o FLIP_STALL termina no proximo apagamento vertical. Aqui ele
+terminava no instante em que era pedido, porque nao ha scanout para esperar --
+e o proprio comentario no executor ja dizia que o pacing queria o relogio de
+vblank. `flip_pace()` espera o resto do frame ali, que e o lugar onde o
+hardware esperaria: a thread do titulo esta bloqueada no fence que este
+executor avanca.
+
+Medido: 59,86 a 60,03 fps, estavel. Quando o renderizador e mais lento que o
+display nada acontece -- a fronteira ja passou e o flip segue direto, que e
+exatamente o que um frame perdido e. Ficar mais de alguns frames atrasado
+reinicia o relogio em vez de tentar recuperar, porque recuperar significaria
+uma rajada de flips sem pacing.
+
+59,94 Hz porque o runtime forca NTSC-M mesmo para disco PAL. `RECOMP_FLIP_HZ`
+troca a taxa, `RECOMP_NO_FLIP_PACE=1` desliga.
+
+## Audio: o caminho esta vivo, o hardware emulado e que esta mudo (15/out)
+
+Sem som. O log mostra tudo de pe: XAudio2 inicializado a 48 kHz, APU iniciada
+pelo titulo (`SECTL=0000000F`), doorbells do DSP respondidos, interrupcoes
+entregues e reivindicadas, e `sound/generic.awd` carregado.
+
+"Sem audio" tem duas metades que da cadeira sao identicas: a APU produziu
+silencio, ou produziu som que nunca chegou. `RECOMP_APU_LEVEL=1` mede a ultima
+coisa antes do buffer ir para a placa:
+
+```
+[APU] 582656 frames submitted, peak 0 of 32767 this second (0 overall)
+```
+
+582 mil frames entregues, no relogio certo, **todos zerados**. Entao nao e
+dispositivo, nem volume, nem a sessao de audio do processo: o hardware emulado
+esta mudo e a saida esta sa.
+
+Onde continuar, em ordem de custo:
+
+- `d->monitor.point` nunca e atribuido em lugar nenhum, entao vale 0 =
+  `MCPX_APU_DEBUG_MON_AC97`. O processador de voz so escreve em
+  `monitor.frame_buf` quando o ponto e `MCPX_APU_DEBUG_MON_VP`
+  (`apu_vp.c:1213`); com qualquer outro, quem deveria preencher e o caminho
+  GP/EP -- que o proprio log declara `STUBBED - passthrough mode`.
+- O comentario em `apu_dsp.c:160` descreve os contadores `[APU-BIN]`
+  (heard/lost por mixbin) usados na investigacao do Jet Set Radio Future.
+  Eles nao existem mais no codigo; recria-los diz de imediato se o titulo
+  sequer inicia vozes, ou se as inicia e elas sao descartadas num bin.
