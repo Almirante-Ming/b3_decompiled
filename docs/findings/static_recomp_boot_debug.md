@@ -1416,3 +1416,58 @@ os mesmos campos que o projeto concorrente precisa gerar.
    (`RECOMP_SKIP_LIVE_WAIT=0`). Se sair, a causa raiz esta resolvida e o
    contorno vira rede de seguranca.
 3. Aceitar `--xbe/--game-dir/--save-name`.
+
+## EEPROM: bloco de fabrica implementado, hipotese de causa raiz REFUTADA
+
+### Correcao da anotacao anterior
+
+A numeracao que escrevi estava errada. Conferida contra
+`XboxDev/nxdk lib/xboxkrnl/xboxkrnl.h`:
+
+| indice | eu havia escrito | real |
+|---|---|---|
+| 0x100 | -- | `XC_FACTORY_SERIAL_NUMBER` |
+| 0x101 | serial | **`XC_FACTORY_ETHERNET_ADDR` (MAC)** |
+| 0x102 | -- | `XC_FACTORY_ONLINE_KEY` |
+| 0x103 | chave online | **`XC_FACTORY_AV_REGION`** |
+| 0x104 | regiao AV | **`XC_FACTORY_GAME_REGION`** |
+| 0xFFFF | EEPROM inteira | `XC_MAX_ALL`, correto |
+
+O Burnout 3 pede MAC e as duas regioes -- nao pede serial nem chave online.
+Entao a ligacao com o `ConsoleIdentity` do xrevive (serial/MAC/chave de HD) e
+**mais fraca** do que eu afirmei: coincide so no MAC.
+
+### O resultado: a hipotese nao se confirmou
+
+Com os seis indices respondidos e **zero `unhandled`**, rodando com
+`RECOMP_SKIP_LIVE_WAIT=0`, a maquina de loading **continua parando no estado
+10**. Responder a EEPROM nao destrava o XOnline. O contorno de timeout
+permanece necessario, e a causa raiz do travamento segue em aberto.
+
+A implementacao fica porque e correta por si: um titulo que pergunta merece
+resposta bem formada, e zeros com aviso nao sao resposta.
+
+### Em troca, um bug latente de PAL
+
+Derivar a regiao do disco e o certo, e foi o que implementei primeiro: o XBE
+declara em `cert+0xA0` para que regiao foi prensado. Medido com o disco
+europeu do usuario:
+
+- regiao PAL (`0x04` / AV `0x300`): o titulo **trava no boot**, antes de abrir
+  um unico arquivo.
+- NTSC-M (`0x01` / AV `0x100`): boot normal, 37 arquivos, chega aos videos.
+
+PAL-I e 50 Hz, com resolucao e temporizacao proprias, e o nosso caminho de AV
+e NV2A nao as trata. O defeito e nosso, nao do valor. Entao o padrao fica
+**deliberadamente NTSC-M mesmo para disco PAL**, com `RECOMP_REGION=pal` para
+reproduzir o travamento, e `g_xbe_game_region` ja exposto para quando o
+caminho PAL existir.
+
+### Erro meu, removido
+
+A primeira versao do `XC_MAX_ALL` escrevia a regiao no offset 0x58 do dump
+cru, para o bloco concordar com 0x103/0x104. **Esse offset eu inventei** -- a
+secao de fabrica real e cifrada e tem layout proprio, que eu nao verifiquei.
+Fabricar estrutura nao conferida e pior que devolver zeros: zeros um titulo
+reconhece como ausencia, um campo plausivel no lugar errado ele trata como
+dado. Removido; devolve zeros.
