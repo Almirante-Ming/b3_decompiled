@@ -2645,3 +2645,45 @@ medido e que havia um custo real introduzido nesta sessao e que ele saiu.
 
 O proximo item de performance continua sendo o ping-pong de superficie: 6200
 flushes para 3511 flips.
+
+## 32 bits num processo de 64: os slots que mudaram de largura (15/out)
+
+O usuario apontou a classe certa, e ela tinha um caso vivo no log:
+
+```
+NtFreeVirtualMemory failed: base=00F7FE5C01F1A000 type=0x4000 err=87
+```
+
+Nao e um endereco: sao dois. `0x01F1A000` e a base verdadeira e `0x00F7FE5C`
+a palavra vizinha na pilha do guest -- vimos esse mesmo valor como `esp` nos
+watches. O console e de 32 bits e este runtime e um processo de 64, e a
+assinatura mente sobre isso: `PVOID*` e `PSIZE_T` apontam para slots que o
+titulo criou com quatro bytes, e desreferenciar com o tipo da assinatura le
+oito.
+
+O lado de alocacao era pior. Em caso de sucesso fazia `*BaseAddress = result`:
+**escreve oito bytes num slot de quatro**, sobrescrevendo a vizinha. Isso e
+corrupcao de memoria do guest, nao log feio.
+
+Alem da largura, duas coisas estavam trocadas no mesmo lugar:
+
+1. o valor mal lido ia direto para `VirtualFree`. Sempre falhava, entao nada
+   voltava -- mas se um dia aquele numero coincidisse com uma alocacao do
+   runtime, liberaria memoria **nossa**;
+2. o endereco devolvido pela alocacao tem de ser um VA do guest. `VirtualAlloc`
+   devolve 64 bits que nao cabem no slot e nao significam nada para o titulo.
+
+As duas funcoes agora leem e escrevem 32 bits, alocam do heap do guest e
+recusam qualquer VA que nao seja um bloco nosso, dizendo qual era. A ponte ja
+fazia tudo isso certo; estas sao as versoes que a tabela de thunks expoe, e a
+ponte chama a de liberacao como ultimo recurso -- que e de onde o log saia.
+
+Medido depois: **zero** enderecos de 64 bits no `xbox_kernel.log`, 59,5-60 fps,
+16074 relatorios de USB com 12 setups, audio com pico 10828 de 32767.
+
+### Uma medicao fora da curva, registrada sem explicacao
+
+Numa das execucoes de verificacao o relatorio marcou **23,32 fps**. Cinco
+execucoes seguintes, com e sem o instrumento de audio ligado, deram 59,18 a
+59,97. Nao reproduzi e nao tenho causa; fica anotado como visto, porque um
+numero desses some do registro se nao for escrito e volta a assustar depois.
