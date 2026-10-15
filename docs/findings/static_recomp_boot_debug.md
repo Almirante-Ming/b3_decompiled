@@ -2477,3 +2477,50 @@ sempre True, o teste do caso sem evidencia quebra. Os 58 testes de
 *nenhum* endereco caindo no meio de instrucao -- nem mantido, nem rejeitado.
 Aquele seed realinhava o decode e fazia outros parecerem mal-alinhados; tirar
 um desfez a cascata.
+
+## Audio: ha som, e intermitente (15/out)
+
+Com o input funcionando, as medicoes de audio mudam de resposta.
+
+`RECOMP_APU_VOICE_TRACE` agora imprime uma linha por voz distinta (antes
+gastava o orcamento nos primeiros fetches, que sao sempre as mesmas vozes
+ociosas do attract). Das dez vozes que o titulo poe para tocar nos menus,
+**uma tem PCM de verdade**:
+
+```
+v71 stereo stream  spb=2 ebo=2047  -> addr=0x002F3A00 first=0x01220122
+v73 stereo buffer  ebo=65535       -> addr=0x01AA00E0 first=0x00000000
+v74 mono   buffer  ebo=14687       -> addr=0x01774D30 first=0x00000000
+v68 mono   buffer  ss=2 cs=4       -> addr=0x025F4300 first=0x00000000
+...
+```
+
+A de **stream** tem amostras; as de **buffer** leem zero. E o medidor de saida
+confirma que isso chega na placa:
+
+```
+[APU] 2783232 frames submitted, peak 0 of 32767 this second (13999 overall)
+```
+
+**Pico geral 13999 de 32767** -- 43% da escala. Nao e silencio: houve som
+durante a execucao. O pico por intervalo em zero nos ultimos segundos diz que
+ele parou, nao que nunca existiu.
+
+Isso corrige a conclusao da entrada anterior, que era verdadeira so para o
+attract: "o hardware emulado esta mudo" valia quando o titulo nao tinha o que
+tocar. Com o jogo dirigivel, ele tem.
+
+### As duas perguntas que sobram
+
+1. **Por que para.** O som aparece e some. `paused 1504` por intervalo mostra
+   vozes sendo pausadas; a de stream pode estar terminando o buffer e nao
+   sendo realimentada. O caminho a seguir e o `ssl`/segmento da voz de stream
+   em `voice_get_samples`.
+2. **Por que as vozes de buffer leem zero.** Os enderecos resolvem para
+   paginas plausiveis (0x01AA00E0, 0x01774D30, 0x025F4300) e o conteudo e
+   zero. Pode ser que o titulo ainda nao os tenha preenchido quando olhamos --
+   o trace pega a *primeira* busca de cada voz -- ou que o buffer esteja em
+   outro lugar. Repetir o trace mais tarde na vida de cada voz responde.
+
+E o FMV continua mudo por construcao, independente disso: `video_player.c` so
+seleciona `MFMediaType_Video`.
