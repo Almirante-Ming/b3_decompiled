@@ -2574,3 +2574,44 @@ Duas saidas:
 
 A segunda e a certa e nao e para fazer no fim de uma sessao: mexe no que os
 tres subsistemas pisam. A primeira e um curativo que vale medir antes.
+
+## Audio: as vozes de buffer soam (15/out)
+
+A hipotese da entrada anterior foi testada e esta certa. `RECOMP_APU_PHYS=va`
+faz `mcpx_apu_phys` ler enderecos fora da imagem como VA do guest em vez de
+offset da janela contigua:
+
+| | sem a chave | com `RECOMP_APU_PHYS=va` |
+|---|---|---|
+| vozes que ja soaram | `v71` | **`v71 v73 v74 v75 v76 v77 v78 v79`** |
+| soando agora | nenhuma | `v73` |
+| pico por segundo | `0` | **`10826 de 32767`**, continuo |
+
+Nao prejudica o resto -- a mudanca e confinada a APU, e foi conferido: 59,94
+fps e 16140 transferencias de USB com ela ligada.
+
+### Por que fica como chave, e nao como padrao
+
+A leitura certa depende de como o titulo alocou o buffer, e os outros titulos
+deste runtime nao podem ser medidos daqui. Entao o runtime mantem o
+comportamento e **quem mediu decide**: o `Play (Keyboard).cmd` do Burnout 3
+liga, junto com `RECOMP_PB_GPU` e `RECOMP_USB`, cada uma com o numero que a
+justifica no comentario.
+
+### Por que nao da para desambiguar direito
+
+Tentei duas saidas e as duas esbarram no mesmo lugar:
+
+- **Perguntar ao alocador** se o offset e um bloco que ele entregou: sem
+  `RECOMP_HEAP_RECLAIM` o alocador contiguo e um ponteiro de bump, entao essa
+  pergunta *e* o teste que ja existe (`< marca d'agua`), e um VA do heap cai na
+  mesma faixa. A informacao se perde la atras, em `MmGetPhysicalAddress`, que
+  devolve o endereco inalterado e com isso funde os dois espacos num so.
+- **Aliasar a janela com a RAM baixa**, como no hardware: esta explicitamente
+  rejeitado no layout de memoria, e com razao -- a imagem do titulo ocupa
+  essas mesmas paginas, e o arena contiguo entrega offsets a partir de
+  0x1000. Para valer, o arena teria de ser numerado acima da imagem, o que
+  mexe na GPU e no USB ao mesmo tempo.
+
+A segunda continua sendo o conserto certo. Fica anotada com o porque de nao
+ter sido feita agora.
