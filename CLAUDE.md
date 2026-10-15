@@ -130,6 +130,26 @@ reintroduzindo o bug historico (tabela de campos um dword fora) e conferindo
 que quatro asserts quebram. Um teste que passou de primeira e nunca falhou
 pode nao estar afirmando nada.
 
+## Ler o codigo do titulo: o C levantado, nao o Ghidra
+
+`vendor/burnout3/src/game/recomp/gen/` tem o titulo inteiro em C, lifted pelo
+recompilador. Para entender o que o jogo faz, leia **de la**, nao do Ghidra:
+
+- cobre exatamente o codigo que roda;
+- nao custa dois minutos por funcao (o Ghidra estoura 120 s em funcoes grandes
+  deste binario);
+- e funciona para alvos que o Ghidra nao reconhece como funcao -- rotinas de
+  DPC, callbacks e outros alvos que so existem por ponteiro, que sao
+  justamente as interessantes quando se investiga um driver.
+
+O REA continua util para a pergunta inversa: achar *quem* referencia um
+endereco ou uma constante (foi assim que a unica referencia a `0xFED00000`
+apareceu). Para constantes, um grep direto no XBE costuma ser mais rapido:
+converter com `tools/xbe/xbe2pe.py` so e preciso para abrir no REA.
+
+E para observar o estado em execucao ha `RECOMP_WATCH=<addr>[,<addr>]`, que
+imprime cada mudanca com o `esp` de quem escreveu.
+
 ## Armadilhas ja pagas
 
 - **`src/d3d/d3d8_vsh.c` decodifica microcodigo errado** (opcode MAC no bit 21

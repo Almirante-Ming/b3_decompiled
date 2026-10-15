@@ -2192,3 +2192,78 @@ execucao.
 O que se sabe do estado depois dela: nenhum ED aparece em lugar nenhum da
 arena do XPP, e `HcControlHeadED` continua zero. Entao ou ela nao chega a
 montar o endpoint, ou monta e algo logo depois o desfaz.
+
+## O que as outras implementacoes fazem, e a ferramenta melhor que achamos (15/out)
+
+A pergunta era o que xemu e Cxbx-Reloaded fazem de diferente. A resposta curta
+e desconfortavel: **a mesma coisa que nos**. Os dois emulam o OHCI no nivel de
+registrador e rodam o driver XPP do proprio titulo -- nao ha atalho de HLE ali
+para copiar. Logo, a diferenca nao esta na abordagem, e sim no comportamento
+do controlador em algum detalhe.
+
+Procurei os detalhes obvios dessa linhagem (o modelo do xemu vem do QEMU) e
+**ja estao todos aqui**, postos por rodadas anteriores, com os comentarios a
+dizer que doeram:
+
+- relogio de frame, `HcFmNumber` avancando por conta propria e `INTR_SF`
+  levantado (sem isso a enumeracao para logo depois de SET_ADDRESS, esperando
+  tempo passar);
+- listas percorridas por tick e nao so quando `ControlListFilled` e escrito;
+- `HcInterruptEnable` write-1-to-set e `HcInterruptDisable` write-1-to-clear;
+- write-1-to-clear das mudancas de porta **antes** dos set/clear, porque a
+  mesma palavra que pede um reset novo tambem reconhece o anterior.
+
+Entao nao e nenhum desses.
+
+### A ferramenta: o C levantado, nao o Ghidra
+
+O Ghidra nao reconhece funcao em `0x003665CC` -- nada no binario a chama
+direto, so o ponteiro de DPC chega la. Mas **o recompilador a emitiu**, e o C
+levantado esta em `src/game/recomp/gen/`. Ler o driver do titulo ali e melhor
+que decompilar: cobre exatamente o codigo que roda, nao custa 120 s por
+funcao, e funciona para os alvos que so existem por ponteiro.
+
+Vale para qualquer investigacao futura neste projeto.
+
+### A enumeracao e tentada, repetidamente
+
+Pelo C levantado, a cadeia depois do reset:
+
+```
+sub_003665CC   maquina de estados sobre o byte 0x41ACB8
+               (o callback de reset o poe em 2)
+  estado 2 ->  sub_003662C8
+                 if (MEM8(0x41AC41) != 0) -> erro, desiste
+                 MEM8(0x41AC43) = 1
+                 monta o SETUP em 0x41AC44, wLength = 8
+                 sub_00366AF6(...)        <- submete
+```
+
+Medido com `RECOMP_WATCH`:
+
+- `0x41AC41` (o portao) vale **0**, entao a checagem passa;
+- `0x41AC43` vale 1, entao `sub_003662C8` de fato rodou;
+- `0x41AC44` (o buffer do SETUP) **muda o tempo todo** -- 0x20, 0x0220,
+  0x0230, 0x4030... O driver monta pacotes de setup repetidamente.
+
+E mesmo assim o modelo conta `0 setups` e, no instante do `ControlListFilled`,
+`HcControlHeadED` vale `0x80000000`.
+
+### Uma hipotese minha, derrubada
+
+Achei que a nossa propria entrega de interrupcao estivesse sujando a arena do
+XPP: `ohci_call_isr()` empurra `0xDEADBEEF` como endereco de retorno na pilha
+do guest, e ha um `0xDEADBEEF` exatamente em `0x80000000`.
+
+Nao e isso. As pilhas de worker ficam em `0x00780000..0x00B80000`, longe da
+janela contigua, e `RECOMP_WATCH=0x80000000` mostra os dois writes vindo de
+codigo do guest com `esp=0x00F7FD94`: primeiro um ponteiro (`0x01E1E001`),
+depois `0xDEADBEEF` por cima -- que e o padrao de "guardei o objeto, agora
+marquei como liberado". Os tres `0xDEADBEEF` do runtime (APU, OHCI, uma
+sentinela) nao se encaixam em nenhum deles.
+
+### O proximo passo
+
+`sub_00366AF6`, no C levantado: e ele que recebe o SETUP montado e deveria
+construir o ED e o TD e ligar a lista. E onde o endereco que vai para
+`HcControlHeadED` e calculado.
