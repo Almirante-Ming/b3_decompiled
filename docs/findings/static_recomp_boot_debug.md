@@ -1703,3 +1703,70 @@ RECOMP_PB_GPU_DUMP=1     escreve o HLSL gerado em nv2a_{vs,ps}_<hash>.hlsl
 - Rodando pelo caminho UNC (`\\wsl.localhost\...`), o titulo para na tela
   "There is a problem with the disc you are using". Nao investigado; pelo
   `Play (Keyboard).cmd`, do lado Windows, nao e o que acontece.
+
+## "O disco esta sujo" nao era regressao: era caixa de letra (15/out)
+
+Com o caminho de GPU no ar, o titulo passou a parar em "There is a problem
+with the disc you are using. It may be dirty or damaged.". A suspeita natural
+era a mudanca recem-feita. Medido em vez de discutido: com as mudancas do
+runtime postas de lado (`git stash`, caminho de GPU nem compilado) e
+reconstruido, **a mesma tela aparece**. Nao e regressao do backend grafico.
+
+A causa esta no `xbox_kernel.log`, em duas linhas:
+
+```
+NtCreateFile FAILED: Burnout 3 Takedown\Sound\DSP\B3XboxFx.bin (err=3)
+```
+
+`err=3` e ERROR_PATH_NOT_FOUND. O arquivo existe -- como
+`sound/DSP/B3XboxFx.bin`. O titulo pede `Sound\`, o disco extraido tem
+`sound/`. O sistema de arquivos do Xbox e FATX e nao diferencia caixa, entao o
+titulo escreve o nome como quiser: ele pede `Sound\DSP\B3XboxFx.bin` e tambem
+`sound\fe.awd`, enquanto o disco carrega `sound\DSP\` e `sound\Fe.awd`. Em
+NTFS isso nao e problema de ninguem. Rodando com o jogo num share do WSL
+(`\\wsl.localhost\...`), que diferencia caixa, o open falha -- e um titulo que
+nao consegue ler um arquivo que sabe estar ali conclui a coisa obvia.
+
+### O conserto
+
+`fix_path_case()` em `kernel_path.c`: se o caminho ja resolve, nada muda (que
+e todo open em NTFS, ao custo de um `GetFileAttributes`). So quando nao
+resolve, percorre os componentes e pergunta ao proprio diretorio como cada um
+se escreve. Uma correspondencia sem caixa tem o mesmo comprimento, entao a
+correcao e escrita no lugar.
+
+Consertar o caminho e nao o disco e deliberado: renomear os arquivos
+extraidos faria o runtime depender de uma convencao de extracao, e o titulo
+nao esta errado -- no hardware que emulamos, as duas grafias nomeiam o mesmo
+arquivo.
+
+Depois do conserto o jogo passa da verificacao de disco, mostra a tela de
+LOADING/LADEN/CARGANDO/LADDAR com a barra andando, o logo da EA, e entra no
+attract mode. Sobram dois opens falhando, os dois legitimamente ausentes e
+sem efeito visivel: `TDATA\FFFE0000\MUSIC\ST.DB` (trilha personalizada do
+dashboard) e `CACHE\LocalCache00.bin`.
+
+**Lacuna conhecida**: o mesmo conserto falta no ramo POSIX de
+`xbox_translate_path`, onde o problema e permanente e nao condicional ao
+share.
+
+## O A/B que importa, na cena que travava (15/out)
+
+Com o disco resolvido, a mesma cena de antes -- a que rendia os 21 fps da
+entrada "FPS: medido" -- pode finalmente ser medida dos dois lados:
+
+| | fps | o que desenha |
+|---|---|---|
+| software | **21,3 / 21,6** | logo da EA, ~24 M pixels por intervalo |
+| `RECOMP_PB_GPU=1` | **91 / 99 / 112** | o mesmo, e segue para o attract 3D |
+
+Quatro a cinco vezes, e acima dos 60 do alvo. Zero batches recusados, zero
+aproximacoes contadas.
+
+A diferenca mais eloquente nao esta na tabela: nos mesmos 60 segundos, o
+caminho de software ainda estava no logo da EA quando o de GPU ja corria o
+attract mode -- rua, carro com farois, outdoors, borrao de velocidade, tudo
+pelo pushbuffer, com vertex program e combiners traduzidos. O frame de
+software do logo, por sua vez, mostra justamente os artefatos reclamados:
+padrao de xadrez sobre o fundo inteiro e uma emenda diagonal no canto
+superior. Sao do rasterizador, e nao aparecem no caminho de GPU.
