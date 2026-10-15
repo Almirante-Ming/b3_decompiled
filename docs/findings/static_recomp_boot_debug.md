@@ -2615,3 +2615,33 @@ Tentei duas saidas e as duas esbarram no mesmo lugar:
 
 A segunda continua sendo o conserto certo. Fica anotada com o porque de nao
 ter sido feita agora.
+
+## FPS: aumentar o cache sem mudar a busca (15/out)
+
+Relato de regressao de performance. Aqui o attract fica em 59,94 com e sem o
+conserto de audio -- isolado e inocentado --, mas procurando o que a sessao
+pudesse ter piorado apareceu um custo introduzido por mim.
+
+Os caches do backend foram de 64/64/256 para 256/512/2048 **sem mudar a
+busca**, que era linear. O lookup de textura passou a varrer 2048 entradas por
+estagio, por draw: quatro estagios numa centena de draws por frame dao um
+milhao de comparacoes por frame, onde antes eram cento e vinte mil. O custo so
+aparece depois que o cache fica grande o bastante para ser util.
+
+Indexado por hash, com sonda de oito e o despejo (que roda so no miss) ainda
+varrendo tudo:
+
+| versao | fps na mesma cena |
+|---|---|
+| 64/64/256, cheios, caindo no software | 51-56 |
+| 256/512/2048, busca linear | 56-58 |
+| 256/512/2048, **busca por hash** | **59,55-59,98** |
+
+Com 1158 texturas no cache, zero recusas, zero despejos.
+
+Fica dito que **isto nao prova ser o que foi relatado**: o script de pad daqui
+nao passa dos menus, e uma corrida de verdade tem outra carga. O que esta
+medido e que havia um custo real introduzido nesta sessao e que ele saiu.
+
+O proximo item de performance continua sendo o ping-pong de superficie: 6200
+flushes para 3511 flips.
