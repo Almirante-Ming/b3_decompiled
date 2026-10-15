@@ -2524,3 +2524,53 @@ tocar. Com o jogo dirigivel, ele tem.
 
 E o FMV continua mudo por construcao, independente disso: `video_player.c` so
 seleciona `MFMediaType_Video`.
+
+## Audio: a causa raiz das vozes mudas, medida (15/out)
+
+Com os dois instrumentos novos a pergunta fechou.
+
+**Qual voz soa**: das dez que o titulo poe para tocar nos menus, **so v71** --
+a de stream, a musica -- produziu amostra alguma vez. Nenhuma voz de buffer
+produziu uma unica, na execucao inteira. Nao e "olhei cedo demais".
+
+**Por que**: lendo a mesma pagina das duas formas possiveis,
+
+```
+v73 stereo buffer -> addr=0x01AA00E0
+  como VA simples: 3849/4096 bytes nao-zero     <- o PCM esta aqui
+  como fisico:        0/4096 bytes nao-zero     <- onde lemos
+```
+
+A cadeia completa:
+
+1. o titulo aloca o buffer de audio em memoria comum (nao contigua);
+2. chama `MmGetPhysicalAddress`, que **devolve o endereco inalterado** para
+   qualquer coisa fora da janela contigua -- correto como stub, ambiguo como
+   resposta;
+3. programa esse valor na tabela de scatter-gather do VP;
+4. `mcpx_apu_phys()` o ve abaixo da marca d'agua do alocador contiguo e o
+   trata como offset fisico, mandando a leitura para a janela -- que neste
+   runtime e **armazenamento separado**, nao um alias da RAM baixa.
+
+A voz de stream escapa por acidente: o endereco dela cai dentro da imagem do
+titulo, onde o primeiro ramo de `mcpx_apu_phys` acerta.
+
+E a mesma ambiguidade que ja mordeu o executor de pushbuffer (`dma_resolve`) e
+o OHCI (`bus_resolve`). Cada um a resolveu por heuristica propria; a do audio
+erra para este caso.
+
+### O conserto, e por que nao foi feito agora
+
+Duas saidas:
+
+- **Desambiguar pelos registros do alocador**: perguntar ao alocador contiguo
+  se aquele offset corresponde a um bloco que ele entregou
+  (`xbox_ContiguousBlockSize`). E local, mas depende de `RECOMP_HEAP_RECLAIM`
+  para a lista de blocos existir.
+- **Fazer a janela ser alias da RAM baixa**, em vez de copia. E como e no
+  hardware -- fisico P e 0x80000000+P sao os mesmos bytes -- e faria as tres
+  heuristicas deixarem de ser heuristica. E mudanca de layout de memoria, com
+  efeito sobre a GPU, a APU e o USB ao mesmo tempo.
+
+A segunda e a certa e nao e para fazer no fim de uma sessao: mexe no que os
+tres subsistemas pisam. A primeira e um curativo que vale medir antes.
