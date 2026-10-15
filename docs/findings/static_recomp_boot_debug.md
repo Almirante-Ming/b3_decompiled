@@ -2267,3 +2267,65 @@ sentinela) nao se encaixam em nenhum deles.
 `sub_00366AF6`, no C levantado: e ele que recebe o SETUP montado e deveria
 construir o ED e o TD e ligar a lista. E onde o endereco que vai para
 `HcControlHeadED` e calculado.
+
+## USB: a causa raiz medida -- o pool de descritores nunca e povoado (15/out)
+
+Seguindo pelo C levantado, a cadeia da enumeracao esta completa e cada elo foi
+lido do codigo que de fato roda:
+
+```
+sub_003662C8   monta o SETUP em 0x41AC44 (wLength 8), op 2
+  sub_00366AF6   despacha pelo opcode em +1 do pacote
+    sub_00366633   constroi a transferencia de controle
+      sub_00366620   aloca um descritor:
+                        eax = MEM32(0x755048)        <- cabeca da free-list
+                        if (eax == 0) return NULL
+      if (NULL) { erro 0x80000100; desiste }         <- e aqui que para
+```
+
+**Medido**: `[0x755048]` vale `0x00000000` do inicio ao fim da execucao. A
+free-list de descritores de transferencia esta **vazia o tempo todo**, entao
+toda alocacao devolve NULL, toda transferencia de controle falha com
+`0x80000100`, nenhum ED e jamais construido -- e o controlador, corretamente,
+conta `0 setups`. O driver entao reseta a porta e tenta de novo, para sempre.
+
+Isso explica tudo o que se via por fora: porta que reseta em ciclo,
+`ControlListFilled` com `HcControlHeadED` em lixo, nenhum ED em lugar nenhum
+da arena, e o buffer de SETUP sendo remontado sem parar.
+
+### Quem deveria povoar a lista
+
+```
+sub_0036330F   (init do XPP) chama sub_00363836(ebp + 0x60)
+  sub_00363836   thunk de 12 bytes: ecx = o parametro, chama sub_00363B1B
+    sub_00363B1B   (thiscall) carve o pool:
+                     tamanhos vem de MEM8(this+0xE), MEM32(this+8)
+                     os dois lacos de encadeamento sao limitados por
+                     MEM32(this+4) e MEM32(this+0)
+                     cada descritor entra na lista por +0x18
+```
+
+Com `MEM32(this+0)` e `MEM32(this+4)` em zero, os dois lacos nao executam
+nenhuma volta e a lista fica como foi inicializada: vazia. O `[0x755048] = 0`
+que se ve e a propria inicializacao, nao um erro -- o que falta sao as voltas
+do laco.
+
+**Proxima medicao**: se `sub_0036330F` roda, e o que ha em `ebp+0x60` quando
+ela chama o thunk. Esse bloco e que dimensiona o pool.
+
+### Duas hipoteses minhas, derrubadas nesta rodada
+
+Vale registrar porque as duas pareciam certas:
+
+- **O vies fisico/virtual**: `sub_00366633` calcula `phys = VA - MEM32(0x755040)`
+  e eu apostei que o vies estivesse zerado, o que explicaria o `0x80000000` no
+  registrador. Medido: vale `0x80000000`, corretissimo.
+- **O import nao patcheado**: `sub_00366633` comeca com `call [0x36BC58]`, e
+  esse slot le `0x80000081` -- que e `0x80000000|0x81`, o marcador do ordinal
+  129. Parecia um import que ficou cru. Medido: o slot passa a `0xFE0000F8`,
+  que e o esquema de thunk sintetico deste runtime, e o
+  `RECOMP_ICALL_SAFE_AT` resolve `0xFE000000+` por `recomp_lookup_kernel`.
+  Esta certo.
+
+Nenhuma recompilacao se justifica ainda: toda funcao desta cadeia existe no
+dispatch e roda. O que falta e um valor, nao uma funcao.
