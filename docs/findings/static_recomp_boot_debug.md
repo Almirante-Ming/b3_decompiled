@@ -2390,3 +2390,53 @@ A entrada anterior dizia: se `VOICE_ON` subir acima de 4 e o `PCM peak`
 continuar 0, o defeito esta na busca das amostras. Subiu para 28 em 11 handles
 e o pico continua 0.00. Entao o proximo alvo do audio e `voice_get_samples()`
 -- nao o inicio das vozes.
+
+## FPS: os 51 fps eram cache cheio, nao carga (15/out)
+
+Com o input funcionando o jogo chega aos menus de verdade, e ali o quadro
+caiu para 51 fps. Primeiro isolei o suspeito obvio e ele caiu: com USB ligado
+e desligado, no attract, **os dois ficam em 59,94**. O USB nao custa nada. Os
+51 fps vinham de outra cena -- a que o controle destravou.
+
+Medida na cena pesada, o motivo estava no proprio relatorio:
+
+```
+refused: ... 32811 cache full ...   2587 uploads   51-56 fps
+```
+
+Os caches do backend eram 64 shaders de vertex, 64 de combiner e 256 texturas,
+**sem despejo**: uma vez cheios, cheios para sempre. E um miss de shader com o
+cache cheio nao perde um shader -- ele recusa o batch inteiro, que cai no
+rasterizador de software e ainda forca um flush do render target e um upload
+na volta. Trinta e duas mil vezes em dez segundos.
+
+Redimensionados (256/512/2048) e com despejo por menos-recentemente-usado:
+
+| | antes | depois |
+|---|---|---|
+| recusas por cache cheio | 32.811 | **0** (e zero despejos: cabe tudo) |
+| uploads de superficie | 2.587 | 2.624 |
+| fps na mesma cena | 51-56 | **58-60** |
+
+O relatorio tambem parou de somar coisas diferentes: "cache full" saiu de
+dentro de "refused" e virou um contador de despejo por cache. Um numero que
+mistura causas nao dimensiona nada.
+
+### O que sobra, e o conserto certo
+
+6106 flushes e 2624 uploads para 3481 flips -- quase dois round-trips de
+superficie por frame. E o ping-pong de render target: trocar de superficie faz
+a atual ser lida de volta para a memoria do guest e recarregada depois, porque
+e assim que uma textura que aponta para ela enxerga o que foi desenhado.
+
+Adiar e o conserto: marcar o RT como "precisa de flush se alguem ler" e so
+faze-lo quando uma textura cair em cima do seu endereco. Nao foi feito agora
+porque e um teste de sobreposicao no caminho de textura, e o ganho medido
+seria de ~2 fps -- vale depois que audio e PAL estiverem resolvidos.
+
+### Nota sobre PAL
+
+A versao europeia roda a 50 Hz, e `RECOMP_FLIP_HZ=50` ja existe para isso. Mas
+o caminho PAL ainda trava no boot (ver a entrada da EEPROM), entao o runtime
+continua forcando NTSC-M mesmo com disco europeu. Quando o AV/NV2A tratar 50
+Hz, o pacing ja esta pronto.
