@@ -1967,3 +1967,40 @@ construcao, independentemente de toda a APU. E trabalho a parte e delimitado:
 selecionar o stream de audio no source reader, decodificar para PCM 48 kHz
 estereo e entrega-lo -- o mixer de software em `apu_core.c` ja acumula por
 cima do frame da APU, entao ha onde entregar sem um segundo dispositivo.
+
+### Tentei verificar e esbarrei no input (15/out)
+
+Com a cadeia de audio em tempo real, a pergunta "resolveu?" so se responde com
+o titulo tocando alguma coisa. Sem alguem no teclado, a unica forma daqui e o
+script de pad do proprio runtime (`RECOMP_USB=1` + `RECOMP_PAD_SCRIPT`).
+
+Nao funciona, e nao por causa do script: **o titulo nunca le o pad**.
+`RECOMP_INPUT_DIAG=1` nao imprime uma linha, e as estatisticas do OHCI dizem
+o porque:
+
+```
+[OHCI0] stats: 0 periodic transfers; reports 0 setups 0 out0 0 outN 0;
+        ctl=000000BE ien=80000073 ists=00000004 ctlhead=00000000
+```
+
+Zero setups. O driver do titulo configura o controlador (HCCA, listas,
+interrupcoes), **ve o dispositivo** --
+
+```
+read +0x54 = 00010101    CCS=1 (conectado), PPS=1 (alimentado), CSC=1 (mudou)
+```
+
+-- atende a interrupcao de root hub (`raised 00000040 -> ISR claimed it`), e
+nunca enfileira uma unica transferencia de controle. Sem enumeracao nao ha
+pad, e sem pad nao ha como sair do attract.
+
+A pista para seguir: o titulo escreve `HcControlHeadED` (offset 0x20) ora com
+`00000000`, ora com `80000000`. Esse registrador leva um endereco **fisico**,
+e 0x80000000 e o topo da janela contigua deste runtime -- ou seja, um endereco
+virtual escrito onde se espera um fisico. O ED que lemos nesse endereco vem
+com `info=DEADBEEF`, que e memoria nunca escrita. Conferir o que
+`MmGetPhysicalAddress` devolve para uma alocacao contigua, e como `ohci.c`
+resolve o head da lista de controle, e por onde comecar.
+
+Isso coloca o **input como o portao**: e o primeiro item da prioridade
+declarada, e tambem o que bloqueia a verificacao do audio.
