@@ -1897,3 +1897,73 @@ estar afirmando nada.
 
 As diretrizes do projeto para quem chega depois estao em
 [`CLAUDE.md`](../../CLAUDE.md).
+
+## Audio: a cadeia agora anda em tempo real, e o que resta e o titulo (15/out)
+
+Continuando por `voice_resample()`, com autonomia para instrumentar.
+
+### A tradução de endereço esta certa
+
+`RECOMP_APU_VOICE_TRACE=<n>` imprime cada busca: formato, `ba`, `cbo`, `ebo`,
+o registrador de scatter-gather, o endereço resolvido e o que ha nele.
+
+```
+[APU-V] v67 mono buffer ss=1 cs=2 spb=1 ba=0x0000022C cbo=0 ebo=31
+        sge=0x025D0000 -> addr=0x0261C22C first=0x00000000
+[APU-V]   page 0x0261C000: 1268/4096 bytes non-zero, first at +0x1
+          (voice reads +0x22C)
+```
+
+A tabela de paginas esta populada, o endereço resolve para uma pagina **viva**
+-- 1268 de 4096 bytes nao-zero -- e o offset que a voz le esta zerado dentro
+dela. Nao e endereço errado: e uma voz que nao tem o que tocar.
+
+### A APU corria a dois tercos do tempo real
+
+Com o monitor consertado, a taxa real apareceu: 32.000 amostras/s entregues a
+uma voz de 48 kHz, ou seja, underrun continuo. Antes isso era invisivel porque
+o monitor submetia quatro buffers por frame e a fila do XAudio2 descartava
+tres -- **a fila, e nao a APU, estava ditando a taxa de saida**, e por isso ela
+media 48 kHz certinhos.
+
+A causa nao era o arredondamento do throttle (consertado tambem, agora espera
+em microssegundos), e sim a resolucao do temporizador do Windows: 15,6 ms por
+padrao, para um frame que vence a cada 5,333 ms. `timeBeginPeriod(1)` no init
+da APU:
+
+| | se_frames/s | amostras/s |
+|---|---|---|
+| antes | 1280 | ~32.000 |
+| depois | **1504** | **48.128** |
+
+### O caminho de saida esta provado
+
+`RECOMP_APU_TEST_TONE=1` liga a senoide de 440 Hz que ja existia no codigo e
+nada acionava. Com ela, o medidor mostra pico 6000 de 32767 chegando a placa,
+continuamente. Tudo da VP ate o XAudio2 carrega audio quando ha audio -- o que
+antes era impossivel, porque o `memset` apagava o frame.
+
+### O que resta
+
+Nesta cena o titulo emitiu `NV1BA0_PIO_VOICE_ON` **quatro vezes, quatro
+handles distintos**, na execucao inteira. Nao e que percamos vozes entre o
+front-end e as listas: ele so pediu quatro, e essas quatro leem silencio. Sem
+interacao as execucoes daqui ficam no attract, onde pode nao haver o que tocar.
+
+**Previsao com regra de decisao**, para a proxima execucao interativa com
+`RECOMP_APU_LEVEL=1`:
+
+- se `VOICE_ON` subir acima de 4 ao navegar os menus e o `PCM peak` continuar
+  0, o defeito esta na busca das amostras e volta a `voice_get_samples`;
+- se `VOICE_ON` ficar em 4, o titulo nao esta iniciando vozes, e o defeito
+  esta acima -- DirectSound/XACT, ou o DSP, que neste runtime e stub e cujo
+  programa (`Sound/DSP/B3XboxFx.bin`) o titulo carrega.
+
+### E uma segunda mudez, independente
+
+`video_player.c` seleciona `MFMediaType_Video` e mais nada: o player de FMV
+**nao decodifica audio nenhum**. Os videos de introducao sao mudos por
+construcao, independentemente de toda a APU. E trabalho a parte e delimitado:
+selecionar o stream de audio no source reader, decodificar para PCM 48 kHz
+estereo e entrega-lo -- o mixer de software em `apu_core.c` ja acumula por
+cima do frame da APU, entao ha onde entregar sem um segundo dispositivo.
